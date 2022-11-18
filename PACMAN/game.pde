@@ -6,7 +6,7 @@ class Game
   String _levelName;
   
   Game() {
-    _board = null;
+    _board = new Board(POSITION, CELL_SIZE); ;
     _hero = null;
   }
   
@@ -14,6 +14,7 @@ class Game
   }
   
   void drawIt() {
+    _board.drawIt(); 
   }
   
   void handleKey(int k) {
