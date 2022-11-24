@@ -7,7 +7,7 @@ class Game
   
   Game() {
     _board = new Board();
-    _hero = null;
+    _hero = new Hero();
   }
   
   void update() {
@@ -17,6 +17,36 @@ class Game
     _board.drawIt(); 
   }
   
-  void handleKey(int k) {
+  void handleKey(int key) {
+    if (key == CODED) {
+      if(keyCode == LEFT){
+        println("gauche");  
+      }
+      if(keyCode == RIGHT){
+        println("droite"); 
+      }
+      if(keyCode == UP){
+        println("haut"); 
+      }
+      if(keyCode == DOWN){
+        println("bas"); 
+      }
+    }
+    
+    else{
+      if(key == 'q'){
+        println("gauche"); 
+      }
+      if(key == 'd'){
+        println("droite"); 
+      }
+      if(key == 'z'){
+        println("haut"); 
+      }
+      if(key == 's'){
+        println("bas"); 
+      }
+    }
   }
+  
 }

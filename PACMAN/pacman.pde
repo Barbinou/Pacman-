@@ -7,7 +7,7 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  background(0);// deplacer background et gamedrawit dans la fonction draw
   game.drawIt();
   game.update(); 
 }

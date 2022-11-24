@@ -22,12 +22,10 @@ enum TypeCell {
   }
 }
 
-class Board {
+public class Board {
   TypeCell _cells[][];
   PVector _position;  // position du labyrinthe
-  int _nbCellsX;
-  int _nbCellsY;
-  int _cellSize; // cells should be square
+  int _nbCellsX, _nbCellsY, _cellSize;
 
   void createBoard() {  // fonction pour créer le board grace au fichier.txt du niveau 
     String[] lines = loadStrings("levels/level1.txt");
@@ -38,7 +36,7 @@ class Board {
       if (x == 1) {  // creation des variables 
         _nbCellsY = lines[x].toCharArray().length;
         _cells = new TypeCell [_nbCellsX][_nbCellsY];
-        _position = new PVector((_nbCellsY / 10f)+ 0.5, 0.5);  //  valeur _position.x pour l'espace du score | valeur _position_y ne change que par rapport au width, les differentes valeurs sur carnet 
+        _position = new PVector((_nbCellsY / 10f)+ 0.56, 0.52);  //  valeur _position.x pour l'espace du score | valeur _position_y ne change que par rapport au width, les differentes valeurs sur carnet 
       }
 
       for (int y = 0; y < lines[x].toCharArray().length; y++) {  // toCharArray() permet de definir mon x (String) comme une liste de char
@@ -86,6 +84,7 @@ class Board {
           rect(posX, posY, width /_nbCellsY, height / _nbCellsX);
           break;
         }
+        
         if (y < (_cells[x].length - 1)) {
           _position.y++;  
         } else {
