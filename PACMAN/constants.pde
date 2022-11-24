@@ -1,7 +1,7 @@
-final int CELL_SIZE = 50; 
-final int NB_CELLS_X = (int)(width / CELL_SIZE); 
-final int NB_CELLS_Y = (int) ((height * 0.8) / CELL_SIZE); 
-final PVector POSITION = new PVector(0, height * 0,9); 
-
 final int SCORE_DOT = 10;
 final int SCORE_SUPER_DOT = 50;
+static final color DARK_BLUE = #00008B; 
+static final color LIGHT_PINK = #FFB6C1; 
+static final color YELLOW = #e5de00; 
+static final color BLACK = 0; 
+static final color GRAY = #808080; 

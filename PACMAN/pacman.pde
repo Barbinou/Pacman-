@@ -2,12 +2,13 @@ Game game;
 Board board; 
 
 void setup() {
-  size(800, 800, P2D);
+  size(600, 600, P2D);
   game = new Game();
-  game.drawIt();
 }
 
 void draw() {
+  background(0);
+  game.drawIt();
   game.update(); 
 }
 

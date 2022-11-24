@@ -6,7 +6,7 @@ class Game
   String _levelName;
   
   Game() {
-    _board = new Board(POSITION, CELL_SIZE); ;
+    _board = new Board();
     _hero = null;
   }
   
