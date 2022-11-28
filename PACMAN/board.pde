@@ -22,10 +22,14 @@ enum TypeCell {
   }
 }
 
-public class Board {
+class Board {
   TypeCell _cells[][];
   PVector _position, _offset;  // position du labyrinthe
-  int _nbCellsY, _nbCellsX, _cellSize;
+  int _nbCellsY, _nbCellsX;
+
+  Board() {  // constructeur de Board
+    createBoard();
+  }
 
   void createBoard() {  // fonction pour créer le board grace au fichier.txt du niveau
     String[] lines = loadStrings("levels/level1.txt");
@@ -38,7 +42,7 @@ public class Board {
         _cells = new TypeCell [_nbCellsY][_nbCellsX];
         centrage_de_mort();
         _offset = new PVector(CENTRAGE_DE_MORT, 0);
-        _position = new PVector((_nbCellsX / 10f)+ 0.56, 0.5);  // valeur _position.x pour l'espace du score en haut | valeur _position.Y à cause du CENTER mode 
+        _position = new PVector((_nbCellsX / 10f)+ 0.56, 0.5);  // valeur _position.x pour l'espace du score en haut | valeur _position.Y à cause du CENTER mode
       }
 
       for (int y = 0; y < lines[x].toCharArray().length; y++) {  // toCharArray() permet de definir mon x (String) comme une liste de char
@@ -62,15 +66,15 @@ public class Board {
         float posX = width/_nbCellsX*_position.y;
         float posY = height*0.9/_nbCellsY*_position.x;  // on veut garder 1/10 de la hauteur pour le score
 
-        for (TypeCell type : TypeCell.values()) {  // parcours des mon TypeCell 
+        for (TypeCell type : TypeCell.values()) {  // parcours des mon TypeCell
           if (_cells[x][y] == type)
-            fill(type.getCol()); // aplliquer la couleur correspondante 
+            fill(type.getCol()); // aplliquer la couleur correspondante
         }
 
         switch (_cells[x][y]) {  // prends les differents cas de _cells[][] pour dessiner les differentes parties du board
         case WALL:
         case EMPTY:
-          rect(posX + _offset.x, posY, width /_nbCellsX, height / _nbCellsX);  // offset.x correspond à CENTRAGE_DE_MORT pour centrer le board 
+          rect(posX + _offset.x, posY, width /_nbCellsX, height / _nbCellsX);  // offset.x correspond à CENTRAGE_DE_MORT pour centrer le board
           break;
         case DOT:
           ellipse(posX + _offset.x, posY, (width /_nbCellsY)*0.2, (height / _nbCellsX)*0.2);
@@ -93,17 +97,19 @@ public class Board {
       _position.x++;
     }
   }
-  
-  void centrage_de_mort(){
-    CENTRAGE_DE_MORT =  (width % ((int) width / _nbCellsX)) / 2;  // calcul le nombre de pixels à droite de l'ecran et le divise par 2 pour centrer le board 
+
+  void centrage_de_mort() {
+    CENTRAGE_DE_MORT =  (width % ((int) width / _nbCellsX)) / 2;  // calcul le nombre de pixels à droite de l'ecran et le divise par 2 pour centrer le board
   }
 
   PVector getCellCenter(int i, int j) {
     return null;
   }
 
-  void drawIt() {
-    if(_cells!=null)
+  void drawIt() {  // si je mets pas createBoard() ça foire (essaye de trouver une solution si board est null ca change rien)
+    if (_cells!=null) {
+      createBoard(); 
       drawBoard();
+    }
   }
 }

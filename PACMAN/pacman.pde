@@ -2,12 +2,13 @@ Game game;
 Board board; 
 
 void setup() {
-  size(1200, 600, P2D);
+  size(800, 600, P2D);
   game = new Game();
-  game.drawIt();
 }
 
-void draw() {// deplacer background et gamedrawit dans la fonction draw
+void draw() {// deplacer background et gamedrawit dans la fonction draw 
+  background(0);
+  game.drawIt();
   game.update(); 
 }
 

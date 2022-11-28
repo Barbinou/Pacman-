@@ -7,7 +7,6 @@ class Game
   
   Game() {
     _board = new Board();
-    _board.createBoard();
     _hero = new Hero(_board);
   }
   
@@ -16,8 +15,8 @@ class Game
   }
   
   void drawIt() {
-    _board.drawIt(); 
     _hero.drawIt(); 
+    _board.drawIt(); 
   }
   
   void handleKey(int key) {
