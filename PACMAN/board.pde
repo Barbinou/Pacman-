@@ -1,5 +1,5 @@
-enum TypeCell {
-  EMPTY ('V', GRAY), // EMPTY est un objet qui contient un char et une couleur
+public enum TypeCell {
+  EMPTY ('V', BLACK), // EMPTY est un objet qui contient un char et une couleur
     WALL ('x', DARK_BLUE),
     DOT ('o', LIGHT_PINK),
     SUPER_DOT('O', LIGHT_PINK),
@@ -26,9 +26,9 @@ class Board {
   TypeCell _cells[][];
   PVector _position, _offset;  // position du labyrinthe
   int _nbCellsY, _nbCellsX;
-
-  Board() {  // constructeur de Board
-    createBoard();
+  
+  Board (){
+    createBoard(); 
   }
 
   void createBoard() {  // fonction pour créer le board grace au fichier.txt du niveau
@@ -74,7 +74,7 @@ class Board {
         switch (_cells[x][y]) {  // prends les differents cas de _cells[][] pour dessiner les differentes parties du board
         case WALL:
         case EMPTY:
-          rect(posX + _offset.x, posY, width /_nbCellsX, height / _nbCellsX);  // offset.x correspond à CENTRAGE_DE_MORT pour centrer le board
+          rect(posX + _offset.x, posY, width /_nbCellsX, height*0.9 / _nbCellsY);  // offset.x correspond à CENTRAGE_DE_MORT pour centrer le board et 9/10 de la hauteur pour le rect à cause du placement du score
           break;
         case DOT:
           ellipse(posX + _offset.x, posY, (width /_nbCellsY)*0.2, (height / _nbCellsX)*0.2);
@@ -84,7 +84,7 @@ class Board {
           break;
         default:
           fill(BLACK);
-          rect(posX + _offset.x, posY, width /_nbCellsX, height / _nbCellsY);
+          rect(posX + _offset.x, posY, width /_nbCellsX, height*0.9 / _nbCellsY);
           break;
         }
 
@@ -96,6 +96,7 @@ class Board {
       }
       _position.x++;
     }
+    _position.x -= _nbCellsY; 
   }
 
   void centrage_de_mort() {
@@ -106,10 +107,7 @@ class Board {
     return null;
   }
 
-  void drawIt() {  // si je mets pas createBoard() ça foire (essaye de trouver une solution si board est null ca change rien)
-    if (_cells!=null) {
-      createBoard(); 
-      drawBoard();
-    }
+  void drawIt() { // si je mets pas createBoard() ça foire (essaye de trouver une solution si board est null ca change rien)
+    drawBoard();
   }
 }

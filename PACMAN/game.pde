@@ -15,7 +15,6 @@ class Game
   }
   
   void drawIt() {
-    _hero.drawIt(); 
     _board.drawIt(); 
   }
   

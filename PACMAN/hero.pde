@@ -21,8 +21,6 @@ class Hero {
   void launchMove(PVector dir) {
   }
 
-  // faire move pour chaque directions
-
   void moveLeft() {
     try {
       switch(_board._cells[_cellX][_cellY - 1]) {
@@ -31,11 +29,8 @@ class Hero {
       case DOT:
         for (TypeCell type : TypeCell.values()) {  // parcours des mon TypeCell
           _board._cells[_cellX][_cellY - 1] = type.EMPTY;
-        }      
+        }
         _cellY -= 1;
-        Board plateau = new Board(); 
-        plateau = _board; 
-        plateau.drawBoard(); 
         break;
       case PACMAN:
       case SUPER_DOT:
@@ -77,6 +72,11 @@ class Hero {
     case WALL :
       break;
     case DOT:
+      for (TypeCell type : TypeCell.values()) {  // parcours des mon TypeCell
+        _board._cells[_cellX - 1][_cellY] = type.EMPTY;
+      }
+      _cellX -= 1;
+      break; 
     case PACMAN:
     case SUPER_DOT:
     case EMPTY:
@@ -90,6 +90,11 @@ class Hero {
     case WALL :
       break;
     case DOT:
+      for (TypeCell type : TypeCell.values()) {  // parcours des mon TypeCell
+        _board._cells[_cellX + 1][_cellY] = type.EMPTY;
+      }
+      _cellX += 1;
+      break; 
     case PACMAN:
     case SUPER_DOT:
     case EMPTY:
