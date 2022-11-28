@@ -7,44 +7,47 @@ class Game
   
   Game() {
     _board = new Board();
-    _hero = new Hero();
+    _board.createBoard();
+    _hero = new Hero(_board);
   }
   
   void update() {
+    _hero.update();
   }
   
   void drawIt() {
     _board.drawIt(); 
+    _hero.drawIt(); 
   }
   
   void handleKey(int key) {
     if (key == CODED) {
       if(keyCode == LEFT){
-        println("gauche");  
+        _hero.moveLeft();  
       }
       if(keyCode == RIGHT){
-        println("droite"); 
+        _hero.moveRight();   
       }
       if(keyCode == UP){
-        println("haut"); 
+        _hero.moveUp();   
       }
       if(keyCode == DOWN){
-        println("bas"); 
+        _hero.moveDown();  
       }
     }
     
     else{
       if(key == 'q'){
-        println("gauche"); 
+        _hero.moveLeft();   
       }
       if(key == 'd'){
-        println("droite"); 
+        _hero.moveRight();   
       }
       if(key == 'z'){
-        println("haut"); 
+        _hero.moveUp();  
       }
       if(key == 's'){
-        println("bas"); 
+        _hero.moveDown();  
       }
     }
   }

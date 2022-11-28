@@ -1,5 +1,5 @@
 enum TypeCell {
-    EMPTY ('V', GRAY), // EMPTY est un objet qui contient un char et une couleur 
+  EMPTY ('V', GRAY), // EMPTY est un objet qui contient un char et une couleur
     WALL ('x', DARK_BLUE),
     DOT ('o', LIGHT_PINK),
     SUPER_DOT('O', LIGHT_PINK),
@@ -8,12 +8,12 @@ enum TypeCell {
   final char CHARACTER;
   final color COL;
 
-  TypeCell(char character, color col) {  // constructeur 
+  TypeCell(char character, color col) {  // constructeur
     CHARACTER = character;
     COL = col;
   }
 
-  char getChar() {  // fonction pour avoir les attributs de la classe 
+  char getChar() {  // fonction pour avoir les attributs de la classe
     return CHARACTER;
   }
 
@@ -24,32 +24,34 @@ enum TypeCell {
 
 public class Board {
   TypeCell _cells[][];
-  PVector _position;  // position du labyrinthe
-  int _nbCellsX, _nbCellsY, _cellSize;
+  PVector _position, _offset;  // position du labyrinthe
+  int _nbCellsY, _nbCellsX, _cellSize;
 
-  void createBoard() {  // fonction pour créer le board grace au fichier.txt du niveau 
+  void createBoard() {  // fonction pour créer le board grace au fichier.txt du niveau
     String[] lines = loadStrings("levels/level1.txt");
-    _nbCellsX = lines.length - 1; // length pour ne pas prendre en compte le titre 
+    _nbCellsY = lines.length - 1; // length pour ne pas prendre en compte le titre
 
     for (int x = 1; x < lines.length; x++) { // x = 1 car la première ligne correspond à l'intitulé du niveau
 
-      if (x == 1) {  // creation des variables 
-        _nbCellsY = lines[x].toCharArray().length;
-        _cells = new TypeCell [_nbCellsX][_nbCellsY];
-        _position = new PVector((_nbCellsY / 10f)+ 0.56, 0.52);  //  valeur _position.x pour l'espace du score | valeur _position_y ne change que par rapport au width, les differentes valeurs sur carnet 
+      if (x == 1) {  // creation des variables
+        _nbCellsX = lines[x].toCharArray().length;
+        _cells = new TypeCell [_nbCellsY][_nbCellsX];
+        centrage_de_mort();
+        _offset = new PVector(CENTRAGE_DE_MORT, 0);
+        _position = new PVector((_nbCellsX / 10f)+ 0.56, 0.5);  // valeur _position.x pour l'espace du score en haut | valeur _position.Y à cause du CENTER mode 
       }
 
       for (int y = 0; y < lines[x].toCharArray().length; y++) {  // toCharArray() permet de definir mon x (String) comme une liste de char
-        for (TypeCell type : TypeCell.values()) {  // on parcourt notre type qui est un TypeCell 
+        for (TypeCell type : TypeCell.values()) {  // on parcourt notre type qui est un TypeCell
           if (type.getChar() == lines[x].toCharArray()[y]) {
-            _cells [x-1][y] = type;  // x-1 pour ne pas avoir des null a cause du titre 
+            _cells [x-1][y] = type;  // x-1 pour ne pas avoir des null a cause du titre
           }
         }
       }
     }
   }
 
-  void drawBoard() { // on dessine le board 
+  void drawBoard() { // on dessine le board
     for (int x = 0; x < _cells.length; x++) {
       for (int y = 0; y <_cells[x].length; y++) {  // parcours de _cells[][]
 
@@ -57,42 +59,43 @@ public class Board {
         rectMode(CENTER);
         ellipseMode(CENTER);
 
-        float posX = width/_nbCellsY*_position.y;
-        float posY = height*0.9/_nbCellsX*_position.x;  // on veut garder 1/10 de la hauteur pour le score 
+        float posX = width/_nbCellsX*_position.y;
+        float posY = height*0.9/_nbCellsY*_position.x;  // on veut garder 1/10 de la hauteur pour le score
 
-        for (TypeCell type : TypeCell.values()) {
+        for (TypeCell type : TypeCell.values()) {  // parcours des mon TypeCell 
           if (_cells[x][y] == type)
-            fill(type.getCol());
+            fill(type.getCol()); // aplliquer la couleur correspondante 
         }
 
-        switch (_cells[x][y]) {  // prends les differents cas de _cells[][] pour dessiner les differentes parties du board 
+        switch (_cells[x][y]) {  // prends les differents cas de _cells[][] pour dessiner les differentes parties du board
         case WALL:
         case EMPTY:
-          rect(posX, posY, width /_nbCellsY, height / _nbCellsX);
+          rect(posX + _offset.x, posY, width /_nbCellsX, height / _nbCellsX);  // offset.x correspond à CENTRAGE_DE_MORT pour centrer le board 
           break;
         case DOT:
-          ellipse(posX, posY, (width /_nbCellsX)*0.2, (height / _nbCellsY)*0.2);
+          ellipse(posX + _offset.x, posY, (width /_nbCellsY)*0.2, (height / _nbCellsX)*0.2);
           break;
         case SUPER_DOT:
-          ellipse(posX, posY, (width /_nbCellsX)*0.5, (height / _nbCellsY)*0.5);
-          break;
-        case PACMAN:
-          ellipse(posX, posY, (width /_nbCellsX)*0.7, (height / _nbCellsY)*0.7);
+          ellipse(posX + _offset.x, posY, (width /_nbCellsY)*0.5, (height / _nbCellsX)*0.5);
           break;
         default:
           fill(BLACK);
-          rect(posX, posY, width /_nbCellsY, height / _nbCellsX);
+          rect(posX + _offset.x, posY, width /_nbCellsX, height / _nbCellsY);
           break;
         }
-        
+
         if (y < (_cells[x].length - 1)) {
-          _position.y++;  
+          _position.y++;
         } else {
-          _position.y -= y; // reinitialise y à sa position de départ 
+          _position.y -= y; // reinitialise y à sa position de départ
         }
       }
       _position.x++;
     }
+  }
+  
+  void centrage_de_mort(){
+    CENTRAGE_DE_MORT =  (width % ((int) width / _nbCellsX)) / 2;  // calcul le nombre de pixels à droite de l'ecran et le divise par 2 pour centrer le board 
   }
 
   PVector getCellCenter(int i, int j) {
@@ -100,7 +103,7 @@ public class Board {
   }
 
   void drawIt() {
-    createBoard();
-    drawBoard();
+    if(_cells!=null)
+      drawBoard();
   }
 }

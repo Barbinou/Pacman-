@@ -6,3 +6,7 @@ static final color LIGHT_PINK = #FFB6C1;
 static final color YELLOW = #e5de00; 
 static final color BLACK = 0; 
 static final color GRAY = #808080; 
+
+final float CENTRAGE_POSY = 0.4;  // correspond au centre de la cellule -0.1 car on prend 90% de la hauteur de la fenetre 
+final float CENTRAGE_POSX = 0.5;  // correspond au centre de la cellule 
+int CENTRAGE_DE_MORT; 
