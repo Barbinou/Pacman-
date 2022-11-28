@@ -10,10 +10,10 @@ void draw() {// deplacer background et gamedrawit dans la fonction draw
   background(0);
   game.drawIt();
   game.update(); 
+  game.handleKey(key);
 }
 
 void keyPressed() {
-  game.handleKey(key);
 }
 
 void mousePressed() {

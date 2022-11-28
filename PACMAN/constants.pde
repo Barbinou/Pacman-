@@ -10,3 +10,8 @@ static final color GRAY = #808080;
 final float CENTRAGE_POSY = 0.4;  // correspond au centre de la cellule -0.1 car on prend 90% de la hauteur de la fenetre 
 final float CENTRAGE_POSX = 0.5;  // correspond au centre de la cellule 
 int CENTRAGE_DE_MORT; 
+
+
+float CELL_SIZE_X;
+float CELL_SIZE_Y; 
+float VITESSE_HERO = 0.05; 
