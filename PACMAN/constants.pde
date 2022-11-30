@@ -13,5 +13,4 @@ int CENTRAGE_DE_MORT;
 
 
 float CELL_SIZE_X;
-float CELL_SIZE_Y; 
 float VITESSE_HERO = 0.05; 
