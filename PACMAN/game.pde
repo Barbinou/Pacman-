@@ -45,30 +45,40 @@ class Game
   }
 
   void handleKey(int key) {
+    float targetX = (width / _board._nbCellsX) * (_hero._cellY + CENTRAGE_POSX);
+    float targetY = height * 0.9 / _board._nbCellsY * (_hero._cellX + CENTRAGE_POSY) + height * 0.1;
     if (key == CODED) {
-      if (keyCode == LEFT && _board._cells[_hero._cellX][_hero._cellY - 1].toString() != "WALL") {
-        _hero._move = LEFT;
+      
+      if (keyCode == LEFT) {
+        if (_board._cells[_hero._cellX][_hero._cellY - 1].toString() != "WALL" && _hero._position.y == targetY) {
+          _hero._move = LEFT;
+        } else {
+          _hero._cacheMove = LEFT;
+        }
       }
-      if (keyCode == LEFT && _board._cells[_hero._cellX][_hero._cellY - 1].toString() == "WALL") {
-        _hero._cacheMove = LEFT;
+
+      if (keyCode == RIGHT) {
+        if (_board._cells[_hero._cellX][_hero._cellY + 1].toString() != "WALL" && _hero._position.y == targetY ) {
+          _hero._move = RIGHT;
+        } else {
+          _hero._cacheMove = RIGHT;
+        }
       }
-      if (keyCode == RIGHT && _board._cells[_hero._cellX][_hero._cellY + 1].toString() != "WALL") {
-        _hero._move = RIGHT;
+
+      if (keyCode == UP) {
+        if ( _board._cells[_hero._cellX - 1][_hero._cellY].toString() != "WALL" && _hero._position.x == targetX) { // cas de figure en mouvement regarder le croquis
+          _hero._move = UP;
+        } else {
+          _hero._cacheMove = UP;
+        }
       }
-      if (keyCode == RIGHT && _board._cells[_hero._cellX][_hero._cellY + 1].toString() == "WALL") {
-        _hero._cacheMove = RIGHT;
-      }
-      if (keyCode == UP && _board._cells[_hero._cellX - 1][_hero._cellY].toString() != "WALL") {
-        _hero._move = UP;
-      }
-      if (keyCode == UP && _board._cells[_hero._cellX - 1][_hero._cellY].toString() == "WALL") {
-        _hero._cacheMove = UP;
-      }
-      if (keyCode == DOWN && _board._cells[_hero._cellX + 1][_hero._cellY].toString() != "WALL") {
-        _hero._move = DOWN;
-      }
-      if (keyCode == DOWN && _board._cells[_hero._cellX + 1][_hero._cellY].toString() == "WALL") {
-        _hero._cacheMove = DOWN;
+
+      if (keyCode == DOWN) {
+        if ( _board._cells[_hero._cellX + 1][_hero._cellY].toString() != "WALL" && _hero._position.x == targetX) {
+          _hero._move = DOWN;
+        } else {
+          _hero._cacheMove = DOWN;
+        }
       }
     } else {
       if (key == 'q') {

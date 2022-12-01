@@ -25,12 +25,12 @@ class Hero {
     try {
       switch(_board._cells[_cellX][_cellY - 1]) {
       case WALL :
-        float target = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
-        _position.x = target;
         if (_cacheMove != 0) {
           _move = _cacheMove;
           _cacheMove = 0;
         }
+        float target = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
+        _position.x = target;
         break;
       }
       if (_board._cells[_cellX][_cellY - 1].toString() != "WALL") {
@@ -57,7 +57,6 @@ class Hero {
             _cellY -= 1;
             break;
           }
-
           break;
         case SUPER_DOT:
         case PACMAN:
