@@ -13,28 +13,32 @@ class Game
   void update() {
     float targetX = (width / _board._nbCellsX) * (_hero._cellY + CENTRAGE_POSX);
     float targetY = height * 0.9 / _board._nbCellsY * (_hero._cellX + CENTRAGE_POSY) + height * 0.1;
-    if (_hero._move == LEFT) { 
+    if (_hero._move == LEFT) {
+      _hero._direction.set(0, -1);
       _hero._position.x -= CELL_SIZE_X * VITESSE_HERO;
       if (_hero._position.x <= targetX) {
-        _hero.moveLeft();
+        _hero.move(targetX);
       }
     }
     if (_hero._move == RIGHT) {
+      _hero._direction.set(0, 1);
       _hero._position.x += CELL_SIZE_X * VITESSE_HERO;
       if (_hero._position.x >= targetX) {
-        _hero.moveRight();
+        _hero.move(targetX);
       }
     }
     if (_hero._move == UP) {
+      _hero._direction.set(-1, 0);
       _hero._position.y -= CELL_SIZE_X * VITESSE_HERO;
       if (_hero._position.y <= targetY) {
-        _hero.moveUp();
+        _hero.move(targetY);
       }
     }
     if (_hero._move == DOWN) {
+      _hero._direction.set(1, 0);
       _hero._position.y += CELL_SIZE_X * VITESSE_HERO;
-      if (_hero._position.y >= targetY) {
-        _hero.moveDown();
+      if (_hero._position.y >= targetY) { 
+        _hero.move(targetY);
       }
     }
     _hero.update();
@@ -47,14 +51,14 @@ class Game
   void handleKey(int key) {
     float targetX = (width / _board._nbCellsX) * (_hero._cellY + CENTRAGE_POSX);
     float targetY = height * 0.9 / _board._nbCellsY * (_hero._cellX + CENTRAGE_POSY) + height * 0.1;
-    
-    if (key == CODED || keys.contains(key)){
-      
+
+    if (key == CODED || keys.contains(key)) {
+
       if (keyCode == LEFT || key == 'q') {
         if (_board._cells[_hero._cellX][_hero._cellY - 1].toString() != "WALL" && _hero._position.y == targetY) {
           _hero._move = LEFT;
         } else {
-         _hero._cacheMove = LEFT;
+          _hero._cacheMove = LEFT;
         }
       }
 
@@ -83,5 +87,4 @@ class Game
       }
     }
   }
-  
 }

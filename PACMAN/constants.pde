@@ -16,5 +16,7 @@ int CENTRAGE_DE_MORT;
 float CELL_SIZE_X;
 float VITESSE_HERO = 0.06; 
 
+String ERROR = "java.lang.ArrayIndexOutOfBoundsException: Index -1 out of bounds for length 23"; 
+
 Integer[] keys_tab = {122, 113, 115, 100}; // z, q, s, d traduit en int 
 List <Integer> keys = Arrays.asList(keys_tab); 

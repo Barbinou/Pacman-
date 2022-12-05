@@ -8,366 +8,112 @@ class Hero {
 
   Board _board;
 
-  // move data
   PVector _direction;
   boolean _moving; // is moving ?
 
   Hero(Board b) {  // constructeur de hero
     _board = b;
     getCellHero();
+    _direction = new PVector (0, 0);
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1);
   }
 
   void launchMove(PVector dir) {
   }
 
-  void moveLeft() {
-    float target = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
+  void move(float target) {
     try {
-      switch(_board._cells[_cellX][_cellY - 1]) {
+      switch(_board._cells[_cellX + (int)_direction.x][_cellY + (int) _direction.y]) {
       case WALL :
-        if (_cacheMove != 0) {
-          _move = _cacheMove;
-          _cacheMove = 0;
+        if (_move == RIGHT || _move == LEFT) {
+          _position.x = target;
+        } else {
+          _position.y = target;
         }
-        _position.x = target;
+        if (_cacheMove != 0) {
+          deleteCacheMove();
+        }
         break;
       }
-      if (_board._cells[_cellX][_cellY - 1].toString() != "WALL") {
+      if (_board._cells[_cellX + (int)_direction.x][_cellY + (int)_direction.y] != TypeCell.WALL) {
         switch(_board._cells[_cellX][_cellY]) {
         case DOT:
-          for (TypeCell type : TypeCell.values()) {  // pareil que pour WALL
-            _board._cells[_cellX][_cellY] = type.EMPTY;
-          }
-          switch (_cacheMove) {
-          case UP:
-            if (_board._cells[_cellX - 1][_cellY].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            }
-            break;
-          case RIGHT:
-            if (_board._cells[_cellX][_cellY + 1].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            }
-            break;
-          case DOWN:
-            if (_board._cells[_cellX + 1][_cellY].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            }
-            break;
-          default:
-            _cellY -= 1;
-            break;
-          }
+          eatDOT();
+          cacheMove();
           break;
         case SUPER_DOT:
         case PACMAN:
         case EMPTY:
-          switch (_cacheMove) {
-          case UP:
-            if (_board._cells[_cellX - 1][_cellY].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            } else {
-              _cellY -= 1;
-            }
-            break;
-          case RIGHT:
-            if (_board._cells[_cellX][_cellY + 1].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            } else {
-              _cellY -= 1;
-            }
-            break;
-          case DOWN:
-            if (_board._cells[_cellX + 1][_cellY].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            } else {
-              _cellY -= 1;
-            }
-            break;
-          default:
-            _cellY -= 1;
-            break;
-          }
+          cacheMove();
           break;
         }
       }
     }
     catch(ArrayIndexOutOfBoundsException e) {  // si j'ai une erreur ArrayIndexOutOfBoundsException alors je remets mon pacman tout a droite
-      switch(_board._cells[_cellX][_cellY]) {
-      case DOT:
-        for (TypeCell type : TypeCell.values()) {  // pareil que pour WALL
-          _board._cells[_cellX][_cellY] = type.EMPTY;
-        }
-        break;
+      eatDOT();
+      if (e.toString().equals(ERROR)) {
+        _position.x = width;
+        _cellY = 22;
+      } else {
+        _position.x = 0;
+        _cellY = 0;
       }
-      _position.x = width;
-      _cellY = 22; 
     }
   }
 
-  void moveRight() {
-    float target = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
-    try {
-      switch(_board._cells[_cellX][_cellY + 1]) {
-      case WALL :
-        _position.x = target;
-        if (_cacheMove != 0) {
-          _move = _cacheMove;
-          _cacheMove = 0;
-        }
-        break;
-      }
-      if (_board._cells[_cellX][_cellY + 1].toString() != "WALL") {
-        switch(_board._cells[_cellX][_cellY]) {
-        case DOT:
-          for (TypeCell type : TypeCell.values()) {
-            _board._cells[_cellX][_cellY] = type.EMPTY;
-          }
-          switch (_cacheMove) {
-          case UP:
-            if (_board._cells[_cellX - 1][_cellY].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            }
-            break;
-          case LEFT:
-            if (_board._cells[_cellX][_cellY - 1].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            }
-            break;
-          case DOWN:
-            if (_board._cells[_cellX + 1][_cellY].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            }
-            break;
-          default:
-            _cellY += 1;
-            break;
-          }
-
-          break;
-        case SUPER_DOT:
-        case PACMAN:
-        case EMPTY:
-          switch (_cacheMove) {
-          case UP:
-            if (_board._cells[_cellX - 1][_cellY].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            } else {
-              _cellY += 1;
-            }
-            break;
-          case LEFT:
-            if (_board._cells[_cellX][_cellY - 1].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            } else {
-              _cellY += 1;
-            }
-            break;
-          case DOWN:
-            if (_board._cells[_cellX + 1][_cellY].toString() != "WALL") {
-              _move = _cacheMove;
-              _cacheMove = 0;
-            } else {
-              _cellY += 1;
-            }
-            break;
-          default:
-            _cellY += 1;
-            break;
-          }
-          break;
-        }
-      }
-    }
-    catch(ArrayIndexOutOfBoundsException e) { // pareil sauf qu'ici je me remets à gauche
-      switch(_board._cells[_cellX][_cellY]) {
-      case DOT:
-        for (TypeCell type : TypeCell.values()) {  // pareil que pour WALL
-          _board._cells[_cellX][_cellY] = type.EMPTY;
-        }
-        break;
-      }
-      _position.x = 0;
-      _cellY = 0; 
-    }
-  }
-
-  void moveUp() {
-    switch(_board._cells[_cellX - 1][_cellY]) {
-    case WALL :
-      float target = height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1;
-      _position.y = target;
-      if (_cacheMove != 0) {
-        _move = _cacheMove;
-        _cacheMove = 0;
+  void cacheMove() {
+    switch (_cacheMove) {
+    case UP:
+      if (_board._cells[_cellX - 1][_cellY] != TypeCell.WALL) {
+        deleteCacheMove();
+      } else {
+        updateCellsHero();
       }
       break;
-    }
-    if (_board._cells[_cellX - 1][_cellY].toString() != "WALL") {
-
-      switch(_board._cells[_cellX][_cellY]) {
-      case DOT:
-        for (TypeCell type : TypeCell.values()) {  // parcours des mon TypeCell
-          _board._cells[_cellX][_cellY] = type.EMPTY;
-        }
-
-        switch (_cacheMove) {
-        case RIGHT:
-          if (_board._cells[_cellX][_cellY + 1].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          }
-          break;
-        case LEFT:
-          if (_board._cells[_cellX][_cellY - 1].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          }
-          break;
-        case DOWN:
-          if (_board._cells[_cellX + 1][_cellY].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          }
-          break;
-        default:
-          _cellX -= 1;
-          break;
-        }
-
-        break;
-      case SUPER_DOT:
-      case PACMAN:
-      case EMPTY:
-        switch (_cacheMove) {
-        case RIGHT:
-          if (_board._cells[_cellX][_cellY + 1].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          } else {
-            _cellX -= 1;
-          }
-          break;
-        case LEFT:
-          if (_board._cells[_cellX][_cellY - 1].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          } else {
-            _cellX -= 1;
-          }
-          break;
-        case DOWN:
-          if (_board._cells[_cellX + 1][_cellY].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          } else {
-            _cellX -= 1;
-          }
-          break;
-        default:
-          _cellX -= 1;
-          break;
-        }
-        break;
+    case RIGHT:
+      if (_board._cells[_cellX][_cellY + 1] != TypeCell.WALL) {
+        deleteCacheMove();
+      } else {
+        updateCellsHero();
       }
+      break;
+    case DOWN:
+      if (_board._cells[_cellX + 1][_cellY] != TypeCell.WALL) {
+        deleteCacheMove();
+      } else {
+        updateCellsHero();
+      }
+      break;
+    case LEFT:
+      if (_board._cells[_cellX][_cellY - 1] != TypeCell.WALL) {
+        deleteCacheMove();
+      } else {
+        updateCellsHero();
+      }
+      break;
+    default:
+      updateCellsHero();
     }
   }
 
-  void moveDown() {
-    switch(_board._cells[_cellX + 1][_cellY]) {
-    case WALL :
-      float target = height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1;
-      _position.y = target;
-      if (_cacheMove != 0) {
-        _move = _cacheMove;
-        _cacheMove = 0;
-      }
-      break;
+  void eatDOT() {
+    for (TypeCell type : TypeCell.values()) {
+      _board._cells[_cellX][_cellY] = type.EMPTY;
     }
-    if (_board._cells[_cellX + 1][_cellY].toString() != "WALL") {
+  }
 
-      switch(_board._cells[_cellX][_cellY]) {
-      case DOT:
-        for (TypeCell type : TypeCell.values()) {  // parcours des mon TypeCell
-          _board._cells[_cellX][_cellY] = type.EMPTY;
-        }
-
-        switch (_cacheMove) {
-        case RIGHT:
-          if (_board._cells[_cellX][_cellY + 1].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          }
-          break;
-        case LEFT:
-          if (_board._cells[_cellX][_cellY - 1].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          }
-          break;
-        case UP:
-          if (_board._cells[_cellX - 1][_cellY].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          }
-          break;
-        default:
-          _cellX += 1;
-          break;
-        }
-
-        break;
-      case SUPER_DOT:
-      case PACMAN:
-      case EMPTY:
-        switch (_cacheMove) {
-        case RIGHT:
-          if (_board._cells[_cellX][_cellY + 1].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          } else {
-            _cellX += 1;
-          }
-          break;
-        case LEFT:
-          if (_board._cells[_cellX][_cellY - 1].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          } else {
-            _cellX += 1;
-          }
-          break;
-        case UP:
-          if (_board._cells[_cellX - 1][_cellY].toString() != "WALL") {
-            _move = _cacheMove;
-            _cacheMove = 0;
-          } else {
-            _cellX += 1;
-          }
-          break;
-        default:
-          _cellX += 1;
-          break;
-        }
-        break;
-      }
-    }
+  void deleteCacheMove() {
+    _move = _cacheMove;
+    _cacheMove = 0;
   }
 
   void update() {
     drawIt();
+  }
+
+  void updateCellsHero() {
+    _cellX += (int)_direction.x;
+    _cellY += (int)_direction.y;
   }
 
   void drawIt() {
