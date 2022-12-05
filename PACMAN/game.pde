@@ -47,9 +47,10 @@ class Game
   void handleKey(int key) {
     float targetX = (width / _board._nbCellsX) * (_hero._cellY + CENTRAGE_POSX);
     float targetY = height * 0.9 / _board._nbCellsY * (_hero._cellX + CENTRAGE_POSY) + height * 0.1;
-    if (key == CODED) {
+    
+    if (key == CODED || keys.contains(key)){
       
-      if (keyCode == LEFT) {
+      if (keyCode == LEFT || key == 'q') {
         if (_board._cells[_hero._cellX][_hero._cellY - 1].toString() != "WALL" && _hero._position.y == targetY) {
           _hero._move = LEFT;
         } else {
@@ -57,7 +58,7 @@ class Game
         }
       }
 
-      if (keyCode == RIGHT) {
+      if (keyCode == RIGHT || key == 'd') {
         if (_board._cells[_hero._cellX][_hero._cellY + 1].toString() != "WALL" && _hero._position.y == targetY) {
           _hero._move = RIGHT;
         } else {
@@ -65,34 +66,22 @@ class Game
         }
       }
 
-      if (keyCode == UP) {
-        if (_board._cells[_hero._cellX - 1][_hero._cellY].toString() != "WALL" && _hero._position.x == targetX) { // cas de figure en mouvement regarder le croquis
+      if (keyCode == UP || key == 'z') {
+        if (_board._cells[_hero._cellX - 1][_hero._cellY].toString() != "WALL" && _hero._position.x == targetX) {
           _hero._move = UP;
         } else {
           _hero._cacheMove = UP;
         }
       }
 
-      if (keyCode == DOWN) {
+      if (keyCode == DOWN || key == 's') {
         if ( _board._cells[_hero._cellX + 1][_hero._cellY].toString() != "WALL" && _hero._position.x == targetX) {
           _hero._move = DOWN;
         } else {
           _hero._cacheMove = DOWN;
         }
       }
-    } else {
-      if (key == 'q') {
-        _hero.moveLeft();
-      }
-      if (key == 'd') {
-        _hero.moveRight();
-      }
-      if (key == 'z') {
-        _hero.moveUp();
-      }
-      if (key == 's') {
-        _hero.moveDown();
-      }
     }
   }
+  
 }

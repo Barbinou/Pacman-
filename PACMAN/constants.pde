@@ -1,3 +1,5 @@
+import java.util.*;
+
 final int SCORE_DOT = 10;
 final int SCORE_SUPER_DOT = 50;
 
@@ -11,6 +13,8 @@ final float CENTRAGE_POSY = 0.4;  // correspond au centre de la cellule -0.1 car
 final float CENTRAGE_POSX = 0.5;  // correspond au centre de la cellule 
 int CENTRAGE_DE_MORT; 
 
-
 float CELL_SIZE_X;
 float VITESSE_HERO = 0.06; 
+
+Integer[] keys_tab = {122, 113, 115, 100}; // z, q, s, d traduit en int 
+List <Integer> keys = Arrays.asList(keys_tab); 
