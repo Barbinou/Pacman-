@@ -13,7 +13,7 @@ class Game
   void update() {
     float targetX = (width / _board._nbCellsX) * (_hero._cellY + CENTRAGE_POSX);
     float targetY = height * 0.9 / _board._nbCellsY * (_hero._cellX + CENTRAGE_POSY) + height * 0.1;
-    if (_hero._move == LEFT) {
+    if (_hero._move == LEFT) { 
       _hero._position.x -= CELL_SIZE_X * VITESSE_HERO;
       if (_hero._position.x <= targetX) {
         _hero.moveLeft();
@@ -53,12 +53,12 @@ class Game
         if (_board._cells[_hero._cellX][_hero._cellY - 1].toString() != "WALL" && _hero._position.y == targetY) {
           _hero._move = LEFT;
         } else {
-          _hero._cacheMove = LEFT;
+         _hero._cacheMove = LEFT;
         }
       }
 
       if (keyCode == RIGHT) {
-        if (_board._cells[_hero._cellX][_hero._cellY + 1].toString() != "WALL" && _hero._position.y == targetY ) {
+        if (_board._cells[_hero._cellX][_hero._cellY + 1].toString() != "WALL" && _hero._position.y == targetY) {
           _hero._move = RIGHT;
         } else {
           _hero._cacheMove = RIGHT;
@@ -66,7 +66,7 @@ class Game
       }
 
       if (keyCode == UP) {
-        if ( _board._cells[_hero._cellX - 1][_hero._cellY].toString() != "WALL" && _hero._position.x == targetX) { // cas de figure en mouvement regarder le croquis
+        if (_board._cells[_hero._cellX - 1][_hero._cellY].toString() != "WALL" && _hero._position.x == targetX) { // cas de figure en mouvement regarder le croquis
           _hero._move = UP;
         } else {
           _hero._cacheMove = UP;
