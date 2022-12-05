@@ -2,7 +2,7 @@ class Hero {
   // position on screen
   PVector _posOffset, _position;
   // position on board
-  int _cellX, _cellY, _cacheMove, _move;
+  int _cellX, _cellY, _cacheMove, _move, _life;
   // display size
   float _size;
 
@@ -14,6 +14,7 @@ class Hero {
   Hero(Board b) {  // constructeur de hero
     _board = b;
     getCellHero();
+    _life = 3;
     _direction = new PVector (0, 0);
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); //position de PACMAN recupere
   }
@@ -105,37 +106,40 @@ class Hero {
   }
 
   void update() {
-    float targetX = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);  // differentes cibles que doit atteindre PACMAN en fonction de _move 
+    float targetX = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);  // differentes cibles que doit atteindre PACMAN en fonction de _move
     float targetY = height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1;
-    if (_move == LEFT) {
-      _direction.set(0, -1); // je set la direction qui correspond au _move 
-      _position.x -= CELL_SIZE_X * VITESSE_HERO; // animation deplacmeent de PACMAN 
-      if (_position.x <= targetX) { // si PACMAN à atteint sa cible ou là dépassé 
-        move(targetX); // PACMAN passe à la case suivante 
+
+    switch (_move) {
+    case LEFT:
+      _direction.set(0, -1); // je set la direction qui correspond au _move
+      _position.x -= CELL_SIZE_X * VITESSE_HERO; // animation deplacmeent de PACMAN
+      if (_position.x <= targetX) { // si PACMAN à atteint sa cible ou là dépassé
+        move(targetX); // PACMAN passe à la case suivante
       }
-    }
-    if (_move == RIGHT) {
+      break;
+    case RIGHT:
       _direction.set(0, 1);
       _position.x += CELL_SIZE_X * VITESSE_HERO;
       if (_position.x >= targetX) {
         move(targetX);
       }
-    }
-    if (_move == UP) {
+      break;
+    case UP:
       _direction.set(-1, 0);
       _position.y -= CELL_SIZE_X * VITESSE_HERO;
       if (_position.y <= targetY) {
         move(targetY);
       }
-    }
-    if (_move == DOWN) {
+      break;
+    case DOWN:
       _direction.set(1, 0);
       _position.y += CELL_SIZE_X * VITESSE_HERO;
       if (_position.y >= targetY) {
         move(targetY);
       }
+      break; 
     }
-    drawIt(); // on redessine PACMAN 
+    drawIt(); // on redessine PACMAN
   }
 
   void updateCellsHero() { // deplace PACMAN sur la grille
@@ -143,10 +147,24 @@ class Hero {
     _cellY += (int)_direction.y;
   }
 
-  void drawIt() {  // desinne PACMAN 
+  void drawIt() {  // desinne PACMAN et ses vies
     noStroke();
     fill(YELLOW);
-    ellipse(_position.x + _board._offset.x, _position.y, (width /_board._nbCellsY)*0.5, (height / _board._nbCellsX)*0.5);
+    ellipse(_position.x + _board._offset.x, _position.y, (width /_board._nbCellsY)*0.5, (height / _board._nbCellsX)*0.5); // PACMAN
+    switch (_life) { // affichage des vies de PACMAN
+    case 3:
+      ellipse(width*0.85 - _board._offset.x, height*0.05, (width /_board._nbCellsY)*0.75, (height / _board._nbCellsX)*0.75);
+      ellipse(width*0.90 - _board._offset.x, height*0.05, (width /_board._nbCellsY)*0.75, (height / _board._nbCellsX)*0.75);
+      ellipse(width*0.95 - _board._offset.x, height*0.05, (width /_board._nbCellsY)*0.75, (height / _board._nbCellsX)*0.75);
+      break;
+    case 2:
+      ellipse(width*0.90 - _board._offset.x, height*0.05, (width /_board._nbCellsY)*0.75, (height / _board._nbCellsX)*0.75);
+      ellipse(width*0.95 - _board._offset.x, height*0.05, (width /_board._nbCellsY)*0.75, (height / _board._nbCellsX)*0.75);
+      break;
+    case 1:
+      ellipse(width*0.95 - _board._offset.x, height*0.05, (width /_board._nbCellsY)*0.75, (height / _board._nbCellsX)*0.75);
+      break;
+    }
   }
 
   void getCellHero() { // permet de retouver la posX et Y de pacman dans la grille
