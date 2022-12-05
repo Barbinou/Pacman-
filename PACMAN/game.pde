@@ -11,36 +11,6 @@ class Game
   }
 
   void update() {
-    float targetX = (width / _board._nbCellsX) * (_hero._cellY + CENTRAGE_POSX);
-    float targetY = height * 0.9 / _board._nbCellsY * (_hero._cellX + CENTRAGE_POSY) + height * 0.1;
-    if (_hero._move == LEFT) {
-      _hero._direction.set(0, -1);
-      _hero._position.x -= CELL_SIZE_X * VITESSE_HERO;
-      if (_hero._position.x <= targetX) {
-        _hero.move(targetX);
-      }
-    }
-    if (_hero._move == RIGHT) {
-      _hero._direction.set(0, 1);
-      _hero._position.x += CELL_SIZE_X * VITESSE_HERO;
-      if (_hero._position.x >= targetX) {
-        _hero.move(targetX);
-      }
-    }
-    if (_hero._move == UP) {
-      _hero._direction.set(-1, 0);
-      _hero._position.y -= CELL_SIZE_X * VITESSE_HERO;
-      if (_hero._position.y <= targetY) {
-        _hero.move(targetY);
-      }
-    }
-    if (_hero._move == DOWN) {
-      _hero._direction.set(1, 0);
-      _hero._position.y += CELL_SIZE_X * VITESSE_HERO;
-      if (_hero._position.y >= targetY) { 
-        _hero.move(targetY);
-      }
-    }
     _hero.update();
   }
 
@@ -48,14 +18,15 @@ class Game
     _board.drawIt();
   }
 
-  void handleKey(int key) {
-    float targetX = (width / _board._nbCellsX) * (_hero._cellY + CENTRAGE_POSX);
+  void handleKey(int key) { // fonctionne qui permet de savoir quelle touche j'ai appuyé lors du jeu est crée le _hero._move
+
+    float targetX = (width / _board._nbCellsX) * (_hero._cellY + CENTRAGE_POSX); // targets pour savoir le millieu de la cellule 
     float targetY = height * 0.9 / _board._nbCellsY * (_hero._cellX + CENTRAGE_POSY) + height * 0.1;
 
-    if (key == CODED || keys.contains(key)) {
+    if (key == CODED || KEYS.contains(key)) { // si la clé est codée ou qu'elle appartient à la liste keys
 
       if (keyCode == LEFT || key == 'q') {
-        if (_board._cells[_hero._cellX][_hero._cellY - 1].toString() != "WALL" && _hero._position.y == targetY) {
+        if (_board._cells[_hero._cellX][_hero._cellY - 1] != TypeCell.WALL && _hero._position.y == targetY) { // si la case suivante n'est pas un mur et que PACMAN et au millieu de la cellule
           _hero._move = LEFT;
         } else {
           _hero._cacheMove = LEFT;
@@ -63,7 +34,7 @@ class Game
       }
 
       if (keyCode == RIGHT || key == 'd') {
-        if (_board._cells[_hero._cellX][_hero._cellY + 1].toString() != "WALL" && _hero._position.y == targetY) {
+        if (_board._cells[_hero._cellX][_hero._cellY + 1] != TypeCell.WALL && _hero._position.y == targetY) {
           _hero._move = RIGHT;
         } else {
           _hero._cacheMove = RIGHT;
@@ -71,7 +42,7 @@ class Game
       }
 
       if (keyCode == UP || key == 'z') {
-        if (_board._cells[_hero._cellX - 1][_hero._cellY].toString() != "WALL" && _hero._position.x == targetX) {
+        if (_board._cells[_hero._cellX - 1][_hero._cellY] != TypeCell.WALL && _hero._position.x == targetX) {
           _hero._move = UP;
         } else {
           _hero._cacheMove = UP;
@@ -79,7 +50,7 @@ class Game
       }
 
       if (keyCode == DOWN || key == 's') {
-        if ( _board._cells[_hero._cellX + 1][_hero._cellY].toString() != "WALL" && _hero._position.x == targetX) {
+        if ( _board._cells[_hero._cellX + 1][_hero._cellY] != TypeCell.WALL && _hero._position.x == targetX) {
           _hero._move = DOWN;
         } else {
           _hero._cacheMove = DOWN;
