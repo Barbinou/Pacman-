@@ -1,9 +1,14 @@
 public enum TypeCell {
   EMPTY ('V', BLACK), // EMPTY est un objet qui contient un char et une couleur
     WALL ('x', DARK_BLUE),
-    DOT ('o', LIGHT_PINK),
-    SUPER_DOT('O', LIGHT_PINK),
-    PACMAN ('P', YELLOW);
+    DOT ('o', WHITE),
+    SUPER_DOT('O', WHITE),
+    PACMAN ('P', YELLOW),
+    BLINKY ('B', RED),
+    PINKY('R', PINK),
+    INKY ('I', LIGHT_BLUE),
+    CLYDE('C', ORANGE),
+    DOOR('D', BROWN);
 
   final char CHARACTER;
   final color COL;
@@ -26,9 +31,9 @@ class Board {
   TypeCell _cells[][];
   PVector _position, _offset;  // position du labyrinthe
   int _nbCellsY, _nbCellsX;
-  
-  Board (){
-    createBoard(); 
+
+  Board () {
+    createBoard();
   }
 
   void createBoard() {  // fonction pour créer le board grace au fichier.txt du niveau
@@ -70,11 +75,12 @@ class Board {
           if (_cells[x][y] == type)
             fill(type.getCol()); // aplliquer la couleur correspondante
         }
-        
-        CELL_SIZE_X = width /_nbCellsX; 
+
+        CELL_SIZE_X = width /_nbCellsX;
 
         switch (_cells[x][y]) {  // prends les differents cas de _cells[][] pour dessiner les differentes parties du board
         case WALL:
+        case DOOR:
         case EMPTY:
           rect(posX + _offset.x, posY, width /_nbCellsX, height*0.9 / _nbCellsY);  // offset.x correspond à CENTRAGE_DE_MORT pour centrer le board et 9/10 de la hauteur pour le rect à cause du placement du score
           break;
@@ -85,7 +91,7 @@ class Board {
           ellipse(posX + _offset.x, posY, (width /_nbCellsY)*0.5, (height / _nbCellsX)*0.5);
           break;
         default:
-          fill(BLACK);
+          fill(BLACK); 
           rect(posX + _offset.x, posY, width /_nbCellsX, height*0.9 / _nbCellsY);
           break;
         }
@@ -98,7 +104,7 @@ class Board {
       }
       _position.x++;
     }
-    _position.x -= _nbCellsY; 
+    _position.x -= _nbCellsY;
   }
 
   void centrage_de_mort() {

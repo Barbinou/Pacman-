@@ -76,14 +76,14 @@ class Hero {
       }
       break;
     case DOWN:
-      if (_board._cells[_cellX + 1][_cellY] != TypeCell.WALL) {
+      if (_board._cells[_cellX + 1][_cellY] != TypeCell.WALL && _board._cells[_cellX + 1][_cellY] != TypeCell.DOOR) {
         deleteCacheMove();
       } else {
         updateCellsHero();
       }
       break;
     case LEFT:
-      if (_board._cells[_cellX][_cellY - 1] != TypeCell.WALL) {
+      if ( _board._cells[_cellX][_cellY - 1] != TypeCell.WALL) {
         deleteCacheMove();
       } else {
         updateCellsHero();
@@ -137,7 +137,7 @@ class Hero {
       if (_position.y >= targetY) {
         move(targetY);
       }
-      break; 
+      break;
     }
     drawIt(); // on redessine PACMAN
   }

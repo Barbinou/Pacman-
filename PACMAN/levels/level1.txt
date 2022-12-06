@@ -1,4 +1,4 @@
-﻿Niveau 1 créé par le prof :-)
+Niveau 1 créé par le prof :-)
 xxxxxxxxxxxxxxxxxxxxxxx
 xooooooooooxoooooooooox
 xOxxxoxxxxoxoxxxxoxxxOx
@@ -7,9 +7,9 @@ xooooooooooooooooooooox
 xoxxxoxoxxxxxxxoxoxxxox
 xoooooxooooxooooxooooox
 xxxxxoxxxxoxoxxxxoxxxxx
-VVVVxoxoooooooooxoxVVVV
-xxxxxoxoxxxVxxxoxoxxxxx
-ooooooooxVVVVVxoooooooo
+VVVVxoxooooBooooxoxVVVV
+xxxxxoxoxxxDxxxoxoxxxxx
+ooooooooxVICRVxoooooooo
 xxxxxoxoxxxxxxxoxoxxxxx
 VVVVxoooooooooooooxVVVV
 xxxxxoxoxxxxxxxoxoxxxxx
