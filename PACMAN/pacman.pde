@@ -6,7 +6,7 @@ void setup() {
   game = new Game();
 }
 
-void draw() {// deplacer background et gamedrawit dans la fonction draw 
+void draw() {
   background(0);
   game.drawIt();
   game.update(); 

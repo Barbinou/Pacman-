@@ -23,32 +23,28 @@ class Clyde {
     case LEFT:
       _direction.set(0, -1);
       _position.x -= CELL_SIZE_X * VITESSE_HERO;
-      if (_position.x >= (targetX - TARGET_HITBOX) && _position.x <= (targetX + TARGET_HITBOX)) {
-        _position.x = targetX;
+      if (_position.x <= targetX) {
         move(targetX);
       }
       break;
     case RIGHT:
       _direction.set(0, 1);
       _position.x += CELL_SIZE_X * VITESSE_HERO;
-      if (_position.x <= (targetX + TARGET_HITBOX) && _position.x >= (targetX - TARGET_HITBOX)) {
-        _position.x = targetX;
+      if (_position.x >= targetX) {
         move(targetX);
       }
       break;
     case UP:
       _direction.set(-1, 0);
       _position.y -= CELL_SIZE_X * VITESSE_HERO;
-      if (_position.y >= (targetY - TARGET_HITBOX) && _position.y <= (targetY + TARGET_HITBOX)) {
-        _position.y = targetY;
+      if (_position.y <= targetY) {
         move(targetY);
       }
       break;
     case DOWN:
       _direction.set(1, 0);
       _position.y += CELL_SIZE_X * VITESSE_HERO;
-      if (_position.y <= (targetY + TARGET_HITBOX) && _position.y >= (targetY - TARGET_HITBOX)) {
-        _position.y = targetY;
+      if (_position.y >= targetY) {
         move(targetY);
       }
       break;

@@ -2,6 +2,7 @@ import java.util.*;
 
 final int SCORE_DOT = 10;
 final int SCORE_SUPER_DOT = 50;
+final int SCORE_BONUS = 500;
 
 static final color DARK_BLUE = #00008B; 
 static final color WHITE = #FFFFFF; 
@@ -20,7 +21,6 @@ int CENTRAGE_DE_MORT;
 
 float CELL_SIZE_X;
 final float VITESSE_HERO = 0.05; 
-final int TARGET_HITBOX = 5; // la taille de la target est de 5x5 pixels 
 
 final String ERROR = "java.lang.ArrayIndexOutOfBoundsException: Index -1 out of bounds for length 23"; // erreur de OutOfBounds à gauche de l'écran 
 
