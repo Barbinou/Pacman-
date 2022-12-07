@@ -4,10 +4,11 @@ class Clyde {
   int _cellX, _cellY, _move, _cacheMove;
   PVector _position, _direction;
   List <Integer> _directions = new ArrayList <>(DIRECTIONS);
-  boolean _passage = false; // passage permet de savoir si les fantomes ont déjà traversé la porte pour ne pas les faire rerentrer dans la zone des fantomes 
+  boolean _passage;
 
   Clyde(Board b) {
     _board = b;
+    _passage = false; // passage permet de savoir si les fantomes ont déjà traversé la porte pour ne pas les faire rerentrer dans la zone des fantomes 
     _move = UP; // permet de faire sortir clyde de la zone des fantomes
     getCellClyde();
     _direction = new PVector (0, 0);
@@ -22,28 +23,28 @@ class Clyde {
     switch (_move) {
     case LEFT:
       _direction.set(0, -1);
-      _position.x -= CELL_SIZE_X * VITESSE_HERO;
+      _position.x -= CELL_SIZE_X * VITESSE_GHOST;
       if (_position.x <= targetX) {
         move(targetX);
       }
       break;
     case RIGHT:
       _direction.set(0, 1);
-      _position.x += CELL_SIZE_X * VITESSE_HERO;
+      _position.x += CELL_SIZE_X * VITESSE_GHOST;
       if (_position.x >= targetX) {
         move(targetX);
       }
       break;
     case UP:
       _direction.set(-1, 0);
-      _position.y -= CELL_SIZE_X * VITESSE_HERO;
+      _position.y -= CELL_SIZE_X * VITESSE_GHOST;
       if (_position.y <= targetY) {
         move(targetY);
       }
       break;
     case DOWN:
       _direction.set(1, 0);
-      _position.y += CELL_SIZE_X * VITESSE_HERO;
+      _position.y += CELL_SIZE_X * VITESSE_GHOST;
       if (_position.y >= targetY) {
         move(targetY);
       }

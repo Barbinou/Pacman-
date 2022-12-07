@@ -45,6 +45,8 @@ class Board {
       if (x == 1) {  // creation des variables
         _nbCellsX = lines[x].toCharArray().length;
         _cells = new TypeCell [_nbCellsY][_nbCellsX];
+        GHOST_WIDTH = (width /_nbCellsY)*0.5; 
+        GHOST_HEIGHT = (height /_nbCellsX)*0.5; 
         centrage_de_mort();
         _offset = new PVector(CENTRAGE_DE_MORT, 0);
         _position = new PVector((_nbCellsX / 10f)+ 0.56, 0.5);  // valeur _position.x pour l'espace du score en haut | valeur _position.Y à cause du CENTER mode

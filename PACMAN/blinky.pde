@@ -7,7 +7,7 @@ class Blinky {
 
   Blinky(Board b) {
     _board = b;
-    _move = LEFT; // premier mouvement de blinky
+    _move = RIGHT; // premier mouvement de blinky
     getCellBlinky();
     _direction = new PVector (0, 0);
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); //position de PACMAN recupere
@@ -21,29 +21,33 @@ class Blinky {
     switch (_move) {
     case LEFT:
       _direction.set(0, -1);
-      _position.x -= CELL_SIZE_X * VITESSE_HERO;
+      _position.x -= CELL_SIZE_X * VITESSE_GHOST;
       if (_position.x <= targetX) { 
+        _position.x = targetX; 
         move(targetX);
       }
       break;
     case RIGHT:
       _direction.set(0, 1);
-      _position.x += CELL_SIZE_X * VITESSE_HERO;
+      _position.x += CELL_SIZE_X * VITESSE_GHOST;
       if (_position.x >= targetX) {
+        _position.x = targetX; 
         move(targetX);
       }
       break;
     case UP:
       _direction.set(-1, 0);
-      _position.y -= CELL_SIZE_X * VITESSE_HERO;
+      _position.y -= CELL_SIZE_X * VITESSE_GHOST;
       if (_position.y <= targetY) {
+        _position.y = targetY; 
         move(targetY);
       }
       break;
     case DOWN:
       _direction.set(1, 0);
-      _position.y += CELL_SIZE_X * VITESSE_HERO;
+      _position.y += CELL_SIZE_X * VITESSE_GHOST;
       if (_position.y >= targetY) {
+        _position.y = targetY; 
         move(targetY);
       }
       break;
@@ -54,7 +58,7 @@ class Blinky {
   void drawIt() { // dessine blinky
     noStroke();
     fill(RED);
-    ellipse(_position.x + _board._offset.x, _position.y, (width /_board._nbCellsY)*0.5, (height / _board._nbCellsX)*0.5);
+    ellipse(_position.x + _board._offset.x, _position.y, GHOST_WIDTH, GHOST_HEIGHT);
   }
 
   void randomMove() { // permet d'avoir les mouvements possible du fantomes

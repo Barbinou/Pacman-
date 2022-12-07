@@ -23,28 +23,28 @@ class Inky {
     switch (_move) {
     case LEFT:
       _direction.set(0, -1); 
-      _position.x -= CELL_SIZE_X * VITESSE_HERO; 
+      _position.x -= CELL_SIZE_X * VITESSE_GHOST; 
       if (_position.x <= targetX) { 
         move(targetX); 
       }
       break;
     case RIGHT:
       _direction.set(0, 1);
-      _position.x += CELL_SIZE_X * VITESSE_HERO;
+      _position.x += CELL_SIZE_X * VITESSE_GHOST;
       if (_position.x >= targetX) {
         move(targetX);
       }
       break;
     case UP:
       _direction.set(-1, 0);
-      _position.y -= CELL_SIZE_X * VITESSE_HERO;
+      _position.y -= CELL_SIZE_X * VITESSE_GHOST;
       if (_position.y <= targetY) {
         move(targetY);
       }
       break;
     case DOWN:
       _direction.set(1, 0);
-      _position.y += CELL_SIZE_X * VITESSE_HERO;
+      _position.y += CELL_SIZE_X * VITESSE_GHOST;
       if (_position.y >= targetY) {
         move(targetY);
       }

@@ -6,21 +6,22 @@ class Hero {
   // display size
   float _size;
 
-  PFont _scoreFont; // nouvelle PFont pour avoir une font différente 
+  PFont _scoreFont; // nouvelle PFont pour avoir une font différente
 
   Board _board;
 
   PVector _direction;
-  boolean _moving; // is moving ?
+  boolean _moving, _overpowered; // is moving ?
 
   Hero(Board b) {  // constructeur de hero
     _board = b;
+    _overpowered = false; 
     getCellHero();
     _life = 3;
     _score = 0;
     _direction = new PVector (0, 0);
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); //position de PACMAN recupere
-    _scoreFont = createFont("score.TTF", 128); // je crée ma font 
+    _scoreFont = createFont("score.TTF", 128); // je créée ma font
   }
 
   void launchMove(PVector dir) {
@@ -40,19 +41,12 @@ class Hero {
         }
         break;
       default: // si la case n'est pas un mur
-        switch(_board._cells[_cellX][_cellY]) { // alors je regarde la case dans laquelle je me trouve
-        case DOT: // si c'est une DOT
-          eatDOT();
-          cacheMove();
-          break;
-        default:  // si ce n'est pas une DOT
-          cacheMove();
-          break;
-        }
+        eat(); 
+        cacheMove(); 
       }
     }
     catch(ArrayIndexOutOfBoundsException e) {  // gestion de l'erreur OutOfBounds pour replacer mon PACMAN
-      eatDOT();
+      eat();
       if (e.toString().equals(ERROR)) { // si PACMAN est OutOfBounds à gauche alors je le repositionne à droite et inversement
         _position.x = width;
         _cellY = 22;
@@ -98,11 +92,18 @@ class Hero {
     }
   }
 
-  void eatDOT() { // transforme le type de la cellule en EMPTY
-    for (TypeCell type : TypeCell.values()) {
-      _board._cells[_cellX][_cellY] = type.EMPTY;
+  void eat() { // mange la cellule
+    switch(_board._cells[_cellX][_cellY]) {
+    case DOT:
+      _board._cells[_cellX][_cellY] = TypeCell.EMPTY;
+      _score += SCORE_DOT;
+      break;
+    case SUPER_DOT:
+      _board._cells[_cellX][_cellY] = TypeCell.EMPTY;
+      _score += SCORE_SUPER_DOT;
+      _overpowered = true; 
+      break; 
     }
-    _score += SCORE_DOT; 
   }
 
   void deleteCacheMove() { // supprime la derniere action de l'utilisateur
@@ -144,7 +145,7 @@ class Hero {
       }
       break;
     }
-    drawIt(); // on redessine 
+    drawIt(); // on redessine
   }
 
   void updateCellsHero() { // deplace PACMAN sur la grille
@@ -152,10 +153,10 @@ class Hero {
     _cellY += (int)_direction.y;
   }
 
-  void drawIt() {  
-    drawPacman(); 
-    drawLife(); 
-    drawScore(); 
+  void drawIt() {
+    drawPacman();
+    drawLife();
+    drawScore();
   }
 
   void drawPacman () {
@@ -163,19 +164,19 @@ class Hero {
     fill(YELLOW);
     ellipse(_position.x + _board._offset.x, _position.y, (width /_board._nbCellsY)*0.5, (height / _board._nbCellsX)*0.5); // PACMAN
   }
-  
-  void drawLife() { // dessine la vie 
-    textAlign(RIGHT, CENTER);  // j'aligne ma vie à droite et au centre 
-    textFont(_scoreFont); // j'applique la font 
-    textSize(CELL_SIZE_X*0.5); // taille de la font 
-    text(String.format("Vie : %d", _life), width - _board._offset.x, height*0.05); // string.format gère la concatenation et %d correspond à un int 
+
+  void drawLife() { // dessine la vie
+    textAlign(RIGHT, CENTER);  // j'aligne ma vie à droite et au centre
+    textFont(_scoreFont); // j'applique la font
+    textSize(CELL_SIZE_X*0.5); // taille de la font
+    text(String.format("Vie : %d", _life), width - _board._offset.x, height*0.05); // string.format gère la concatenation et %d correspond à un int
   }
 
-  void drawScore() { // même chose que pour la vie à quelques paramètres près 
-    textAlign(LEFT, CENTER); 
-    textFont(_scoreFont); 
-    textSize(CELL_SIZE_X*0.5); 
-    text(String.format("Score : %d", _score), _board._offset.x, height*0.05); 
+  void drawScore() { // même chose que pour la vie à quelques paramètres près
+    textAlign(LEFT, CENTER);
+    textFont(_scoreFont);
+    textSize(CELL_SIZE_X*0.5);
+    text(String.format("Score : %d", _score), _board._offset.x, height*0.05);
   }
 
   void getCellHero() { // permet de retouver la posX et Y de pacman dans la grille
