@@ -2,7 +2,7 @@ class Hero {
   // position on screen
   PVector _posOffset, _position;
   // position on board
-  int _cellX, _cellY, _cacheMove, _move, _life, _score;
+  int _cellX, _cellY, _cacheMove, _move, _life, _score, _cacheLifeUp;
   // display size
   float _size;
 
@@ -47,6 +47,7 @@ class Hero {
     }
     catch(ArrayIndexOutOfBoundsException e) {  // gestion de l'erreur OutOfBounds pour replacer mon PACMAN
       eat();
+      println(e); 
       if (e.toString().equals(ERROR)) { // si PACMAN est OutOfBounds à gauche alors je le repositionne à droite et inversement
         _position.x = width;
         _cellY = 22;
@@ -99,6 +100,7 @@ class Hero {
       _score += SCORE_DOT;
       break;
     case SUPER_DOT:
+      SUPER_DOT -= 1; 
       _board._cells[_cellX][_cellY] = TypeCell.EMPTY;
       _score += SCORE_SUPER_DOT;
       _overpowered = true; 
@@ -146,6 +148,7 @@ class Hero {
       break;
     }
     drawIt(); // on redessine
+    oneUp(); 
   }
 
   void updateCellsHero() { // deplace PACMAN sur la grille
@@ -177,6 +180,13 @@ class Hero {
     textFont(_scoreFont);
     textSize(CELL_SIZE_X*0.5);
     text(String.format("Score : %d", _score), _board._offset.x, height*0.05);
+  }
+  
+  void oneUp(){ // permet d'augmenter ma vie quand j'atteint 10000 points 
+    if ((_score / ONE_UP) != _cacheLifeUp){  // on regarde si la division est differentes du nombre de vie gagnés au total 
+      _life += 1;
+      _cacheLifeUp += 1; 
+    }
   }
 
   void getCellHero() { // permet de retouver la posX et Y de pacman dans la grille

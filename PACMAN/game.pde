@@ -1,4 +1,5 @@
 class Game
+
 {
   Board _board;
   Hero _hero;
@@ -6,37 +7,36 @@ class Game
   Clyde _clyde;
   Inky _inky;
   Pinky _pinky;
+  SoundFile file;
 
-  String _levelName;
+  String _levelName, _gameState;
   int _savedTime;
+  float _savedSD;
+  List <Integer> _ghostScore;
+  boolean _musicF, _musicC; //permet de lancer une seule fois la music au lieu de la lancer en continue
 
   Game() {
     _board = new Board();
     _hero = new Hero(_board);
-    _blinky = new Blinky(_board);
-    _clyde = new Clyde(_board);
-    _inky = new Inky(_board);
-    _pinky = new Pinky(_board);
+    _blinky = new Blinky(_board, _hero);
+    _clyde = new Clyde(_board, _hero);
+    _inky = new Inky(_board, _hero);
+    _pinky = new Pinky(_board, _hero);
     _savedTime = 0;
+    _musicF = false;
+    _musicC = true;
+    _gameState = "CHASE"; // etat de la partie
   }
 
   void update() {
+    victory(); 
     _hero.update();
     _blinky.update();
-    _clyde.drawIt();
-    _inky.drawIt();
-    _pinky.drawIt();
-    if (millis() >= 5000) { // si la partie à plus de 5s alors mon _clyde bouge
-      _clyde.update();
-    }
-    if (millis() >= 10000) { // si la partie à plus de 10s alors mon _inky bouge
-      _inky.update();
-    }
-    if (millis() >= 15000) { // si la partie à plus de 15s alors mon _pinky bouge
-      _pinky.update();
-    }
-    overpoweredPhase();
-    touch();
+    _inky.update();
+    _pinky.update();
+    _clyde.update();
+    frightenedPhase();  // phase FRIGHTENED si SD mangé
+    touch(); // si pacman touche un fantome
   }
 
   void drawIt() {
@@ -44,102 +44,78 @@ class Game
   }
 
   void touch() {
-    if (conditionTouch(_blinky)) {
-      if (_hero._overpowered) {  // si j'ai un mangé un superdot alors je peux manger un fantome 
-        println("miam");
-        _blinky = new Blinky(_board);
+    if (_blinky.conditionTouch()) {
+      if (_hero._overpowered && _blinky._frightened) {  // si j'ai un mangé un superdot et que le fantome est mangeable
+        _blinky = new Blinky(_board, _hero); // mon blinky meurs et reviens à sa position de départ
+        _hero._score += _ghostScore.remove(0); // chaque fois que je mange un fantome j'enleve de ma liste la premiere valeur
       } else {
-        exit(); // meurs
+        _hero._life -= 1; // meurs
       }
     }
-    if (conditionTouch(_inky)) {
-      if (_hero._overpowered) {  
-        _inky = new Inky(_board);
+    if (_inky.conditionTouch()) {
+      if (_hero._overpowered && _inky._frightened) {
+        _inky = new Inky(_board, _hero);
+        _hero._score += _ghostScore.remove(0);
       } else {
-        exit(); // meurs
+        _hero._life -= 1;
       }
     }
-    if (conditionTouch(_pinky)) {
-      // mourrir ou manger le fantome
-      if (_hero._overpowered) {  // si j'ai un mangé un superdot alors le timer de 10s se lance
-        println("miam");
-        _pinky = new Pinky(_board);
+    if (_pinky.conditionTouch()) {
+      if (_hero._overpowered && _pinky._frightened) {
+        _pinky = new Pinky(_board, _hero);
+        _hero._score += _ghostScore.remove(0);
       } else {
-        exit(); // meurs
+        _hero._life -= 1;
       }
     }
-    if (conditionTouch(_clyde)) {
-      // mourrir ou manger le fantome
-      if (_hero._overpowered) {  // si j'ai un mangé un superdot alors le timer de 10s se lance
-        println("miam");
-        _clyde = new Clyde(_board);
+    if (_clyde.conditionTouch()) {
+      if (_hero._overpowered && _clyde._frightened) {
+        _clyde = new Clyde(_board, _hero);
+        _hero._score += _ghostScore.remove(0);
       } else {
-        exit(); // meurs
+        _hero._life -= 1;
       }
     }
   }
 
-  void overpoweredPhase() { // FRIGHTENED phase (pacman peut manger les fantomes)
+  void frightenedPhase() { // FRIGHTENED phase (pacman peut manger les fantomes)
     if (_hero._overpowered) { // si j'ai rammasé un superdot alors mon pacman change d'etat
       if (_savedTime == 0) { // je start le timer de ma phase
-        _savedTime = millis();
-        VITESSE_GHOST = 0.025; 
+        startFrightened();
+      }
+      if (_savedSD > SUPER_DOT) { // si je ramasse une SD alors je prolonge la durée de SD
+        startFrightened();
       }
       int tempsPasse = millis() - _savedTime; // a chaque fois je rentre dans la fonction temps passe augmente
       if (tempsPasse > SUPER_DOT_TIME_LIMIT) { // si le tempsPasse est plus grand que la durée de ma FRIGHTENED
         _hero._overpowered = false;
-        VITESSE_GHOST = 0.05; 
+        _blinky._frightened = false;
+        _clyde._frightened = false;
+        _inky._frightened = false;
+        _pinky._frightened = false;
+        _gameState = "CHASE";
+        _musicC = true;
         _savedTime = 0;  // je reintinialise le savedtime
       }
     }
   }
 
-  //--------- fonctions qui permettent de savoir quand un des fantomes touche pacman ---------//
-
-  boolean conditionTouch(Blinky _ghost) {
-    // dans touchLeft je regarde quand l'extremité gauche de Pacman touche la partie droite du fantomes
-    boolean touchLeft = (_ghost._position.x <= _hero._position.x - (GHOST_WIDTH*0.5)) && (_hero._position.x - (GHOST_WIDTH*0.5) <= _ghost._position.x + (GHOST_WIDTH*0.5));
-    // touchRight je regarde quand l'extremité droite de Pacman touche la partie gauche du fantomes
-    boolean touchRight = (_ghost._position.x >= _hero._position.x + (GHOST_WIDTH*0.5) && _hero._position.x + (GHOST_WIDTH*0.5) >= _ghost._position.x - (GHOST_WIDTH*0.5));
-    // samePosY permet de savoir si le fantome et pacman sont sur la même colonne
-    boolean samePosY = _ghost._position.y + 2 >= _hero._position.y &&  _ghost._position.y - 2 <= _hero._position.y;
-    // les autres fonctions reprennent le schéma précédent
-    boolean touchUp = (_hero._position.y - (GHOST_HEIGHT*0.5) >= _ghost._position.y) && (_hero._position.y - (GHOST_HEIGHT*0.5) <= _ghost._position.y + (GHOST_HEIGHT*0.5));
-    boolean touchDown = (_hero._position.y + (GHOST_HEIGHT*0.5) <= _ghost._position.y) && (_hero._position.y + (GHOST_HEIGHT) >= _ghost._position.y - (GHOST_HEIGHT*0.5));
-    boolean samePosX = _ghost._position.x + 2 >= _hero._position.x &&  _ghost._position.x - 2 <= _hero._position.x;
-    return ((samePosY && (touchLeft || touchRight)) || (samePosX && (touchDown || touchUp))); // condtitions finale pour savoir quand Pacman touche un fantôme
+  void startFrightened () { // tous les etats de mes objets rentrent en FRIGHTENED
+    _savedSD = SUPER_DOT; // rentre en cahce le nombre de superdot pour prolonger la durée du superdot
+    _savedTime = millis(); // debut du temps
+    _blinky._frightened = true;
+    _clyde._frightened = true;
+    _inky._frightened = true;
+    _pinky._frightened = true;
+    _gameState = "FRIGHTENED"; // je change de mode
+    _musicF = true; // je lance la musqiue correspondante
+    _ghostScore = new ArrayList <>(SCORE_GHOST); // copie de scoreGhost (valeurs globales)
   }
-
-  //overload de la fonctions conditionTouch pour être utilisé par tous les fantomes qui sont de classes différentes
-
-  boolean conditionTouch(Inky _ghost) {
-    boolean touchLeft = (_ghost._position.x <= _hero._position.x - (GHOST_WIDTH*0.5)) && (_hero._position.x - (GHOST_WIDTH*0.5) <= _ghost._position.x + (GHOST_WIDTH*0.5));
-    boolean touchRight = (_ghost._position.x >= _hero._position.x + (GHOST_WIDTH*0.5) && _hero._position.x + (GHOST_WIDTH*0.5) >= _ghost._position.x - (GHOST_WIDTH*0.5));
-    boolean samePosY = _ghost._position.y + 2 >= _hero._position.y &&  _ghost._position.y - 2 <= _hero._position.y;
-    boolean touchUp = (_hero._position.y - (GHOST_HEIGHT*0.5) >= _ghost._position.y) && (_hero._position.y - (GHOST_HEIGHT*0.5) <= _ghost._position.y + (GHOST_HEIGHT*0.5));
-    boolean touchDown = (_hero._position.y + (GHOST_HEIGHT*0.5) <= _ghost._position.y) && (_hero._position.y + (GHOST_HEIGHT) >= _ghost._position.y - (GHOST_HEIGHT*0.5));
-    boolean samePosX = _ghost._position.x + 2 >= _hero._position.x &&  _ghost._position.x - 2 <= _hero._position.x;
-    return ((samePosY && (touchLeft || touchRight)) || (samePosX && (touchDown || touchUp)));
-  }
-
-  boolean conditionTouch(Clyde _ghost) {
-    boolean touchLeft = (_ghost._position.x <= _hero._position.x - (GHOST_WIDTH*0.5)) && (_hero._position.x - (GHOST_WIDTH*0.5) <= _ghost._position.x + (GHOST_WIDTH*0.5));
-    boolean touchRight = (_ghost._position.x >= _hero._position.x + (GHOST_WIDTH*0.5) && _hero._position.x + (GHOST_WIDTH*0.5) >= _ghost._position.x - (GHOST_WIDTH*0.5));
-    boolean samePosY = _ghost._position.y + 2 >= _hero._position.y &&  _ghost._position.y - 2 <= _hero._position.y;
-    boolean touchUp = (_hero._position.y - (GHOST_HEIGHT*0.5) >= _ghost._position.y) && (_hero._position.y - (GHOST_HEIGHT*0.5) <= _ghost._position.y + (GHOST_HEIGHT*0.5));
-    boolean touchDown = (_hero._position.y + (GHOST_HEIGHT*0.5) <= _ghost._position.y) && (_hero._position.y + (GHOST_HEIGHT) >= _ghost._position.y - (GHOST_HEIGHT*0.5));
-    boolean samePosX = _ghost._position.x + 2 >= _hero._position.x &&  _ghost._position.x - 2 <= _hero._position.x;
-    return ((samePosY && (touchLeft || touchRight)) || (samePosX && (touchDown || touchUp)));
-  }
-
-  boolean conditionTouch(Pinky _ghost) {
-    boolean touchLeft = (_ghost._position.x <= _hero._position.x - (GHOST_WIDTH*0.5)) && (_hero._position.x - (GHOST_WIDTH*0.5) <= _ghost._position.x + (GHOST_WIDTH*0.5));
-    boolean touchRight = (_ghost._position.x >= _hero._position.x + (GHOST_WIDTH*0.5) && _hero._position.x + (GHOST_WIDTH*0.5) >= _ghost._position.x - (GHOST_WIDTH*0.5));
-    boolean samePosY = _ghost._position.y + 2 >= _hero._position.y &&  _ghost._position.y - 2 <= _hero._position.y;
-    boolean touchUp = (_hero._position.y - (GHOST_HEIGHT*0.5) >= _ghost._position.y) && (_hero._position.y - (GHOST_HEIGHT*0.5) <= _ghost._position.y + (GHOST_HEIGHT*0.5));
-    boolean touchDown = (_hero._position.y + (GHOST_HEIGHT*0.5) <= _ghost._position.y) && (_hero._position.y + (GHOST_HEIGHT) >= _ghost._position.y - (GHOST_HEIGHT*0.5));
-    boolean samePosX = _ghost._position.x + 2 >= _hero._position.x &&  _ghost._position.x - 2 <= _hero._position.x;
-    return ((samePosY && (touchLeft || touchRight)) || (samePosX && (touchDown || touchUp)));
+  
+  void victory(){
+    if(_hero._life == 0){
+      println("loose"); // faire un popup
+    }
   }
 
   // fonctionne qui permet de savoir quelle touche j'ai appuyé lors du jeu et créée le _hero._move //

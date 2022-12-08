@@ -1,53 +1,63 @@
 class Blinky {
 
   Board _board;
+  Hero _hero;
   int _cellX, _cellY, _move, _cacheMove;
   PVector _position, _direction;
-  List <Integer> _directions = new ArrayList <>(DIRECTIONS); // je crée une copie des mouvements possibles par le fantome
+  List <Integer> _directions; // je crée une copie des mouvements possibles par le fantome
+  boolean _frightened;
+  float _vitesse;
+  color _color;
 
-  Blinky(Board b) {
+  Blinky(Board b, Hero h) {
     _board = b;
+    _hero = h;
+    _directions = new ArrayList <>(DIRECTIONS);
+    _color = RED;
+    _frightened = false;
     _move = RIGHT; // premier mouvement de blinky
     getCellBlinky();
+    _vitesse = VITESSE_GHOST;
     _direction = new PVector (0, 0);
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); //position de PACMAN recupere
   }
-  
-   // pour les commentaires de cette partie se référé aussi à la classe Hero //
 
-  void update() { 
+  // pour les commentaires de cette partie se référé aussi à la classe Hero //
+
+  void update() {
+    frightenedMode();
     float targetX = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
     float targetY = height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1;
     switch (_move) {
     case LEFT:
       _direction.set(0, -1);
-      _position.x -= CELL_SIZE_X * VITESSE_GHOST;
-      if (_position.x <= targetX) { 
-        _position.x = targetX; 
+      _position.x -= CELL_SIZE_X * _vitesse;
+      if (_position.x <= targetX) {
+        _position.x = targetX;
         move(targetX);
       }
       break;
     case RIGHT:
       _direction.set(0, 1);
-      _position.x += CELL_SIZE_X * VITESSE_GHOST;
+      _position.x += CELL_SIZE_X * _vitesse;
       if (_position.x >= targetX) {
-        _position.x = targetX; 
+        _position.x = targetX;
         move(targetX);
       }
       break;
     case UP:
       _direction.set(-1, 0);
-      _position.y -= CELL_SIZE_X * VITESSE_GHOST;
+      _position.y -= CELL_SIZE_X * _vitesse;
       if (_position.y <= targetY) {
-        _position.y = targetY; 
+        _position.y = targetY;
         move(targetY);
       }
       break;
     case DOWN:
       _direction.set(1, 0);
-      _position.y += CELL_SIZE_X * VITESSE_GHOST;
+      _position.y += CELL_SIZE_X * _vitesse;
       if (_position.y >= targetY) {
-        _position.y = targetY; 
+        _position.y = targetY;
         move(targetY);
       }
       break;
@@ -57,7 +67,7 @@ class Blinky {
 
   void drawIt() { // dessine blinky
     noStroke();
-    fill(RED);
+    fill(_color);
     ellipse(_position.x + _board._offset.x, _position.y, GHOST_WIDTH, GHOST_HEIGHT);
   }
 
@@ -77,8 +87,6 @@ class Blinky {
     case DOWN:
       _directions.remove(Integer.valueOf(UP));
       break;
-    default:
-      println(_move);
     }
     _cacheMove = _directions.get(0); // je prends le premier element de ma liste
     _directions.remove(0); // et je l'enlève de la liste
@@ -156,9 +164,9 @@ class Blinky {
   }
 
   void wallGestion(float target) {
-    if (_move == RIGHT || _move == LEFT) {  // permet a Blinky de ne pas depasser le mur 
+    if (_move == RIGHT || _move == LEFT) {  // permet a Blinky de ne pas depasser le mur
       _position.x = target;
-      goodMove(); 
+      goodMove();
     } else {
       _position.y = target;
       goodMove();
@@ -168,11 +176,37 @@ class Blinky {
     }
   }
 
-  void goodMove() { // permet à Blinky de changer de cacheMove si celui-ci le fait rester devant mur 
+  void goodMove() { // permet à Blinky de changer de cacheMove si celui-ci le fait rester devant mur
     if (_cacheMove == 0) {
       _cacheMove = _directions.get(0);
       _directions.remove(0);
     }
+  }
+
+  void frightenedMode() { // changement d'pparence et de vitesse lors du FRIGHTENED 
+    if (_frightened) {
+      _vitesse = 0.025;
+      _color = BLUE;
+    } else {
+      _vitesse = VITESSE_GHOST;
+      _color = RED;
+    }
+  }
+
+  //--------- fonctions qui permettent de savoir quand un des fantomes touche pacman ---------//
+
+  boolean conditionTouch() {
+    // dans touchLeft je regarde quand l'extremité gauche de Pacman touche la partie droite du fantomes
+    boolean touchLeft = (_position.x <= _hero._position.x - (GHOST_WIDTH*0.5)) && (_hero._position.x - (GHOST_WIDTH*0.5) <= _position.x + (GHOST_WIDTH*0.5));
+    // touchRight je regarde quand l'extremité droite de Pacman touche la partie gauche du fantomes
+    boolean touchRight = (_position.x >= _hero._position.x + (GHOST_WIDTH*0.5) && _hero._position.x + (GHOST_WIDTH*0.5) >= _position.x - (GHOST_WIDTH*0.5));
+    // samePosY permet de savoir si le fantome et pacman sont sur la même colonne
+    boolean samePosY = _position.y + 2 >= _hero._position.y && _position.y - 2 <= _hero._position.y;
+    // les autres fonctions reprennent le schéma précédent
+    boolean touchUp = (_hero._position.y - (GHOST_HEIGHT*0.5) >= _position.y) && (_hero._position.y - (GHOST_HEIGHT*0.5) <= _position.y + (GHOST_HEIGHT*0.5));
+    boolean touchDown = (_hero._position.y + (GHOST_HEIGHT*0.5) <= _position.y) && (_hero._position.y + (GHOST_HEIGHT) >= _position.y - (GHOST_HEIGHT*0.5));
+    boolean samePosX = _position.x + 2 >= _hero._position.x && _position.x - 2 <= _hero._position.x;
+    return ((samePosY && (touchLeft || touchRight)) || (samePosX && (touchDown || touchUp))); // condtitions finale pour savoir quand Pacman touche un fantôme
   }
 
   void getCellBlinky() {

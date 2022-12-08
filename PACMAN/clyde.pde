@@ -1,61 +1,71 @@
 class Clyde {
 
   Board _board;
+  Hero _hero;
   int _cellX, _cellY, _move, _cacheMove;
   PVector _position, _direction;
   List <Integer> _directions = new ArrayList <>(DIRECTIONS);
-  boolean _passage;
+  boolean _passage, _frightened;
+  float _vitesse;
+  color _color;
 
-  Clyde(Board b) {
+  Clyde(Board b, Hero h) {
     _board = b;
-    _passage = false; // passage permet de savoir si les fantomes ont déjà traversé la porte pour ne pas les faire rerentrer dans la zone des fantomes 
+    _hero = h;
+    _passage = false; // passage permet de savoir si les fantomes ont déjà traversé la porte pour ne pas les faire rerentrer dans la zone des fantomes
+    _frightened = false;
+    _vitesse = VITESSE_GHOST;
+    _color = ORANGE;
     _move = UP; // permet de faire sortir clyde de la zone des fantomes
     getCellClyde();
     _direction = new PVector (0, 0);
-    _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); 
+    _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1);
   }
 
   // pour les commentaires de cette partie se référé aussi à la classe Hero et Blinky //
 
   void update() {
-    float targetX = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
-    float targetY = height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1;
-    switch (_move) {
-    case LEFT:
-      _direction.set(0, -1);
-      _position.x -= CELL_SIZE_X * VITESSE_GHOST;
-      if (_position.x <= targetX) {
-        move(targetX);
+    frightenedMode();
+    if (millis() >= 5000) { // si la partie à plus de 5s alors mon _clyde bouge
+      float targetX = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
+      float targetY = height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1;
+      switch (_move) {
+      case LEFT:
+        _direction.set(0, -1);
+        _position.x -= CELL_SIZE_X * _vitesse;
+        if (_position.x <= targetX) {
+          move(targetX);
+        }
+        break;
+      case RIGHT:
+        _direction.set(0, 1);
+        _position.x += CELL_SIZE_X * _vitesse;
+        if (_position.x >= targetX) {
+          move(targetX);
+        }
+        break;
+      case UP:
+        _direction.set(-1, 0);
+        _position.y -= CELL_SIZE_X * _vitesse;
+        if (_position.y <= targetY) {
+          move(targetY);
+        }
+        break;
+      case DOWN:
+        _direction.set(1, 0);
+        _position.y += CELL_SIZE_X * _vitesse;
+        if (_position.y >= targetY) {
+          move(targetY);
+        }
+        break;
       }
-      break;
-    case RIGHT:
-      _direction.set(0, 1);
-      _position.x += CELL_SIZE_X * VITESSE_GHOST;
-      if (_position.x >= targetX) {
-        move(targetX);
-      }
-      break;
-    case UP:
-      _direction.set(-1, 0);
-      _position.y -= CELL_SIZE_X * VITESSE_GHOST;
-      if (_position.y <= targetY) {
-        move(targetY);
-      }
-      break;
-    case DOWN:
-      _direction.set(1, 0);
-      _position.y += CELL_SIZE_X * VITESSE_GHOST;
-      if (_position.y >= targetY) {
-        move(targetY);
-      }
-      break;
     }
     drawIt();
   }
 
   void drawIt() {
     noStroke();
-    fill(ORANGE);
+    fill(_color);
     ellipse(_position.x + _board._offset.x, _position.y, (width /_board._nbCellsY)*0.5, (height / _board._nbCellsX)*0.5);
   }
 
@@ -92,7 +102,7 @@ class Clyde {
         wallGestion(target);
         break;
       case DOOR :
-        if (!_passage) {  // gestion de la porte ouverture que dans un sens 
+        if (!_passage) {  // gestion de la porte ouverture que dans un sens
           _passage = true;
           cacheMove();
           break;
@@ -161,10 +171,10 @@ class Clyde {
   void wallGestion(float target) {
     if (_move == RIGHT || _move == LEFT) {
       _position.x = target;
-      goodMove(); 
+      goodMove();
     } else {
       _position.y = target;
-      goodMove(); 
+      goodMove();
     }
     if (_cacheMove != 0) {
       deleteCacheMove();
@@ -176,6 +186,26 @@ class Clyde {
       _cacheMove = _directions.get(0);
       _directions.remove(0);
     }
+  }
+
+  void frightenedMode() {
+    if (_frightened) {
+      _vitesse = 0.025;
+      _color = BLUE;
+    } else {
+      _vitesse = VITESSE_GHOST;
+      _color = ORANGE;
+    }
+  }
+
+  boolean conditionTouch() {
+    boolean touchLeft = (_position.x <= _hero._position.x - (GHOST_WIDTH*0.5)) && (_hero._position.x - (GHOST_WIDTH*0.5) <= _position.x + (GHOST_WIDTH*0.5));
+    boolean touchRight = (_position.x >= _hero._position.x + (GHOST_WIDTH*0.5) && _hero._position.x + (GHOST_WIDTH*0.5) >= _position.x - (GHOST_WIDTH*0.5));
+    boolean samePosY = _position.y + 2 >= _hero._position.y &&  _position.y - 2 <= _hero._position.y;
+    boolean touchUp = (_hero._position.y - (GHOST_HEIGHT*0.5) >= _position.y) && (_hero._position.y - (GHOST_HEIGHT*0.5) <= _position.y + (GHOST_HEIGHT*0.5));
+    boolean touchDown = (_hero._position.y + (GHOST_HEIGHT*0.5) <= _position.y) && (_hero._position.y + (GHOST_HEIGHT) >= _position.y - (GHOST_HEIGHT*0.5));
+    boolean samePosX = _position.x + 2 >= _hero._position.x &&  _position.x - 2 <= _hero._position.x;
+    return ((samePosY && (touchLeft || touchRight)) || (samePosX && (touchDown || touchUp)));
   }
 
   void getCellClyde() {

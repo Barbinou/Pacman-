@@ -56,6 +56,9 @@ class Board {
         for (TypeCell type : TypeCell.values()) {  // on parcourt notre type qui est un TypeCell
           if (type.getChar() == lines[x].toCharArray()[y]) {
             _cells [x-1][y] = type;  // x-1 pour ne pas avoir des null a cause du titre
+            if (type == TypeCell.SUPER_DOT){
+              SUPER_DOT += 1; 
+            }
           }
         }
       }
