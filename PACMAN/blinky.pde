@@ -62,7 +62,6 @@ class Blinky {
       }
       break;
     }
-    drawIt();
   }
 
   void drawIt() { // dessine blinky

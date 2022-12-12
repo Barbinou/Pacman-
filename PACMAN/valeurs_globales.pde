@@ -22,6 +22,7 @@ static final color ORANGE = #FF6600;
 static final color BROWN = #593E1A;
 static final color BLUE = #0021F3; 
 
+final int ARRONDI = 20; 
 final float CENTRAGE_POSY = 0.4;  // correspond au centre de la cellule -0.1 car on prend 90% de la hauteur de la fenetre 
 final float CENTRAGE_POSX = 0.5;  // correspond au centre de la cellule 
 int CENTRAGE_DE_MORT; 
@@ -40,3 +41,5 @@ final List <Integer> KEYS = Arrays.asList(keys_tab); // converti ma tab en Array
 
 Integer [] directions_tab = {LEFT, RIGHT, UP, DOWN};
 List <Integer> DIRECTIONS = new LinkedList <Integer> (Arrays.asList(directions_tab)); 
+
+String [] MENU = {"Sauvegarder", "Charger", "Recommencer", "Highscores", "Quitter"};

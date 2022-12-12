@@ -6,12 +6,13 @@ class Inky {
   PVector _position, _direction;
   List <Integer> _directions = new ArrayList <>(DIRECTIONS);
   boolean _passage, _frightened;
-  float _vitesse;
+  float _vitesse, _timeNoPause;
   color _color;
 
-  Inky(Board b, Hero h) {
+  Inky(Board b, Hero h, Game g) {
     _board = b;
     _hero = h; 
+    _game = g;
     _passage = false;
     _vitesse = VITESSE_GHOST;
     _frightened = false;
@@ -27,7 +28,7 @@ class Inky {
 
   void update() {
     frightenedMode();
-    if (millis() >= 10000) { // si la partie à plus de 10s alors mon _inky bouge
+    if (millis() - _game._timeNoPause >= 10000) { // si la partie à plus de 10s alors mon _inky bouge
       float targetX = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
       float targetY = height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1;
       switch (_move) {
@@ -61,7 +62,6 @@ class Inky {
         break;
       }
     }
-    drawIt();
   }
 
   void drawIt() {

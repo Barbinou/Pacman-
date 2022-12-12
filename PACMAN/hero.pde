@@ -21,7 +21,7 @@ class Hero {
     _score = 0;
     _direction = new PVector (0, 0);
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); //position de PACMAN recupere
-    _scoreFont = createFont("score.TTF", 128); // je créée ma font
+    _scoreFont = createFont("score.TTF", 128, true); // je créée ma font
   }
 
   void launchMove(PVector dir) {
@@ -147,7 +147,6 @@ class Hero {
       }
       break;
     }
-    drawIt(); // on redessine
     oneUp(); 
   }
 

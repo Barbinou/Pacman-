@@ -45,8 +45,8 @@ class Board {
       if (x == 1) {  // creation des variables
         _nbCellsX = lines[x].toCharArray().length;
         _cells = new TypeCell [_nbCellsY][_nbCellsX];
-        GHOST_WIDTH = (width /_nbCellsY)*0.5; 
-        GHOST_HEIGHT = (height /_nbCellsX)*0.5; 
+        GHOST_WIDTH = (width /_nbCellsY)*0.5;
+        GHOST_HEIGHT = (height /_nbCellsX)*0.5;
         centrage_de_mort();
         _offset = new PVector(CENTRAGE_DE_MORT, 0);
         _position = new PVector((_nbCellsX / 10f)+ 0.56, 0.5);  // valeur _position.x pour l'espace du score en haut | valeur _position.Y à cause du CENTER mode
@@ -56,12 +56,29 @@ class Board {
         for (TypeCell type : TypeCell.values()) {  // on parcourt notre type qui est un TypeCell
           if (type.getChar() == lines[x].toCharArray()[y]) {
             _cells [x-1][y] = type;  // x-1 pour ne pas avoir des null a cause du titre
-            if (type == TypeCell.SUPER_DOT){
-              SUPER_DOT += 1; 
+            if (type == TypeCell.SUPER_DOT) {
+              SUPER_DOT += 1;
             }
           }
         }
       }
+    }
+  }
+
+  void saveBoard(BufferedWriter writer) {
+    try { // try and catch obligatoire lors de l'ecriture 
+      for (int x = 0; x < _board._cells.length; x++) { // je parcours mon board 
+        writer.write("\n");
+        for (int y = 0; y <_board._cells[x].length; y++) {
+          for (TypeCell type : TypeCell.values()) { // je parcours tous mes types de TypeCell
+            if (_board._cells[x][y] == type)  
+              writer.write(type.getChar()); // j'ecris dans le fichier le char correpsondant au type de la cellule 
+          }
+        }
+      }
+    }
+    catch (IOException e) {
+      e.printStackTrace();
     }
   }
 
@@ -96,7 +113,7 @@ class Board {
           ellipse(posX + _offset.x, posY, (width /_nbCellsY)*0.5, (height / _nbCellsX)*0.5);
           break;
         default:
-          fill(BLACK); 
+          fill(BLACK);
           rect(posX + _offset.x, posY, width /_nbCellsX, height*0.9 / _nbCellsY);
           break;
         }
@@ -116,11 +133,7 @@ class Board {
     CENTRAGE_DE_MORT =  (width % ((int) width / _nbCellsX)) / 2;  // calcul le nombre de pixels à droite de l'ecran et le divise par 2 pour centrer le board
   }
 
-  PVector getCellCenter(int i, int j) {
-    return null;
-  }
-
-  void drawIt() { // si je mets pas createBoard() ça foire (essaye de trouver une solution si board est null ca change rien)
+  void drawIt() { 
     drawBoard();
   }
 }
