@@ -32,12 +32,11 @@ class Board {
   PVector _position, _offset;  // position du labyrinthe
   int _nbCellsY, _nbCellsX;
 
-  Board () {
-    createBoard();
+  Board (String[] data) {
+    createBoard(data);
   }
 
-  void createBoard() {  // fonction pour créer le board grace au fichier.txt du niveau
-    String[] lines = loadStrings("levels/level1.txt");
+  void createBoard(String [] lines) {  // fonction pour créer le board grace au fichier.txt du niveau
     _nbCellsY = lines.length - 1; // length pour ne pas prendre en compte le titre
 
     for (int x = 1; x < lines.length; x++) { // x = 1 car la première ligne correspond à l'intitulé du niveau
@@ -131,6 +130,15 @@ class Board {
 
   void centrage_de_mort() {
     CENTRAGE_DE_MORT =  (width % ((int) width / _nbCellsX)) / 2;  // calcul le nombre de pixels à droite de l'ecran et le divise par 2 pour centrer le board
+  }
+  
+  void printBoard(){
+    for (int x = 0; x < _cells.length; x++) {
+      println();
+      for (int y = 0; y <_cells[x].length; y++) { 
+        print(_board._cells[x][y] + " "); 
+      }
+    }
   }
 
   void drawIt() { 

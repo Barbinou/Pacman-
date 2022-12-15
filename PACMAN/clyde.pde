@@ -9,8 +9,7 @@ class Clyde {
   float _vitesse, _timeNoPause;
   color _color;
 
-  Clyde(Board b, Hero h, Game g) {
-    _game= g;
+  Clyde(Board b, Hero h) {
     _board = b;
     _hero = h;
     _passage = false; // passage permet de savoir si les fantomes ont déjà traversé la porte pour ne pas les faire rerentrer dans la zone des fantomes
@@ -21,6 +20,24 @@ class Clyde {
     getCellClyde();
     _direction = new PVector (0, 0);
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1);
+  }
+
+  Clyde(Board b, Hero h, PVector position, Boolean frightened, int move, int cacheMove, PVector direction, int directions1, int directions2, int cellX, int cellY, boolean passage) {
+    _board = b;
+    _hero = h;
+    _position = position;
+    _cellY = cellY; 
+    _cellX = cellX;
+    _passage = passage; // passage permet de savoir si les fantomes ont déjà traversé la porte pour ne pas les faire rerentrer dans la zone des fantomes
+    _frightened = frightened;
+    _vitesse = VITESSE_GHOST;
+    _color = ORANGE;
+    _move = move; // permet de faire sortir clyde de la zone des fantomes
+    _cacheMove = cacheMove;
+    _direction = direction;
+    _directions = new ArrayList<>();
+    _directions.add(directions1);
+    _directions.add(directions2);
   }
 
   // pour les commentaires de cette partie se référé aussi à la classe Hero et Blinky //

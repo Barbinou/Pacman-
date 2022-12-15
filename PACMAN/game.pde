@@ -13,26 +13,45 @@ class Game {
   float _savedSD, _timeNoPause;
   List <Integer> _ghostScore;
   boolean _musicF, _musicC, _gamePaused, _gameRetry; //permet de lancer une seule fois la music au lieu de la lancer en continue
+  String[] rawData = loadStrings("levels/level1.txt");
 
   Game(String path) {
-    _board = new Board();
+    _board = new Board(rawData);
     _hero = new Hero(_board);
     _blinky = new Blinky(_board, _hero);
-    _clyde = new Clyde(_board, _hero, this);
-    _inky = new Inky(_board, _hero, this);
-    _pinky = new Pinky(_board, _hero, this);
+    _clyde = new Clyde(_board, _hero);
+    _inky = new Inky(_board, _hero);
+    _pinky = new Pinky(_board, _hero);
     _menu = new Menu(this, _board);
-    _savedTime = 0; // temps sauvegarder pour la gestion du FRIGHTENED 
+    _savedTime = 0; // temps sauvegardé pour la gestion du FRIGHTENED
     _musicF = false;
     _musicC = true;
-    _gamePaused = false; // le jeu est en pause 
-    _gameRetry = false;  // si je recommence 
+    _gamePaused = false; // le jeu est en pause
+    _gameRetry = false;  // si je recommence
     _gameState = "CHASE"; // etat de la partie
-    _path = path; // chemin absolu pour la sauvegarde 
+    _path = path; // chemin absolu pour la sauvegarde
+  }
+
+  Game(String path, Board board, Hero hero, Blinky blinky, Inky inky, Pinky pinky, Clyde clyde, String gameState, float timeNoPause) {
+    _board = board;
+    _hero = hero;
+    _blinky = blinky;
+    _clyde = clyde;
+    _inky = inky;
+    _pinky = pinky;
+    _menu = new Menu(this, _board);
+    _savedTime = 0; // temps sauvegardé pour la gestion du FRIGHTENED
+    _musicF = false;
+    _musicC = true;
+    _gamePaused = false; // le jeu est en pause
+    _gameRetry = false;  // si je recommence
+    _gameState = gameState; // etat de la partie
+    _timeNoPause = timeNoPause;
+    _path = path; // chemin absolu pour la sauvegarde
   }
 
   void update() {
-    if (!_gamePaused) { // si le jeu est en pause j'arrete l'update 
+    if (!_gamePaused) { // si le jeu est en pause j'arrete l'update
       victory();
       _hero.update();
       _blinky.update();
@@ -41,7 +60,7 @@ class Game {
       _clyde.update();
       frightenedPhase();  // phase FRIGHTENED si SD mangé
       touch(); // si pacman touche un fantome
-    } else { // si jeu en pasue update du menu 
+    } else { // si jeu en pasue update du menu
       _menu.drawIt();
     }
   }
@@ -66,7 +85,7 @@ class Game {
     }
     if (_inky.conditionTouch()) {
       if (_hero._overpowered && _inky._frightened) {
-        _inky = new Inky(_board, _hero, this);
+        _inky = new Inky(_board, _hero);
         _hero._score += _ghostScore.remove(0);
       } else {
         _hero._life -= 1;
@@ -74,7 +93,7 @@ class Game {
     }
     if (_pinky.conditionTouch()) {
       if (_hero._overpowered && _pinky._frightened) {
-        _pinky = new Pinky(_board, _hero, this);
+        _pinky = new Pinky(_board, _hero);
         _hero._score += _ghostScore.remove(0);
       } else {
         _hero._life -= 1;
@@ -82,7 +101,7 @@ class Game {
     }
     if (_clyde.conditionTouch()) {
       if (_hero._overpowered && _clyde._frightened) {
-        _clyde = new Clyde(_board, _hero, this);
+        _clyde = new Clyde(_board, _hero);
         _hero._score += _ghostScore.remove(0);
       } else {
         _hero._life -= 1;
@@ -173,15 +192,14 @@ class Game {
     }
   }
 
-  void saveGame(BufferedWriter writer) { // fonction qui permet de sauvegarder mes données de jeu 
+  void saveGame(BufferedWriter writer) { // fonction qui permet de sauvegarder mes données de jeu
     try {
-      writer.write(String.format("\n_blinky._position.x %f _blinky._position.y %f _frightened %b", _blinky._position.x, _blinky._position.y, _blinky._frightened)); // %f pour les floats, %d pour les entiers, %s pour les String et enfin %b pour les booléans
-      writer.write(String.format("\n_inky._position.x %f _inky._position.y %f _frightened %b", _inky._position.x, _inky._position.y, _inky._frightened));
-      writer.write(String.format("\n_pinky._position.x %f _pinky._position.y %f _frightened %b", _pinky._position.x, _pinky._position.y, _pinky._frightened));
-      writer.write(String.format("\n_clyde._position.x %f _clyde._position.y %f _frightened %b", _clyde._position.x, _clyde._position.y, _clyde._frightened));
-      writer.write(String.format("\n_hero._position.x %f _hero._position.y %f _hero._frightened %b _hero._life %d _hero._score %d", _hero._position.x, _hero._position.y, _hero._overpowered, _hero._life, _hero._score, _hero._cacheLifeUp));
-      writer.write(String.format("\n_blinky._position.x %f _blinky._position.y %f _frightened %b", _blinky._position.x, _blinky._position.y, _blinky._frightened));
-      writer.write(String.format("\n_game._gameState %s", _gameState));
+      writer.write(String.format("\n_hero._position.x %f _position.y %f _direction.x %f _direction.y %f _overpowered %b _life %d _score %d _cacheLife %d _move %d _cacheMove %d _cellX %d _cellY %d", _hero._position.x, _hero._position.y, _hero._direction.x, _hero._direction.y, _hero._overpowered, _hero._life, _hero._score, _hero._cacheLifeUp, _hero._move, _hero._cacheMove, _hero._cellX, _hero._cellY));
+      writer.write(String.format("\n_blinky._position.x %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d", _blinky._position.x, _blinky._position.y, _blinky._frightened, _blinky._move, _blinky._cacheMove, _blinky._direction.x, _blinky._direction.y, _blinky._directions.get(0), _blinky._directions.get(1), _blinky._cellX, _blinky._cellY)); // %f pour les floats, %d pour les entiers, %s pour les String et enfin %b pour les booléans
+      writer.write(String.format("\n_inky._position.x %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d _passage %b", _inky._position.x, _inky._position.y, _inky._frightened, _inky._move, _inky._cacheMove, _inky._direction.x, _inky._direction.y, _inky._directions.get(0), _inky._directions.get(1), _inky._cellX, _inky._cellY, _inky._passage));
+      writer.write(String.format("\n_pinky._position.x %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d _passage %b", _pinky._position.x, _pinky._position.y, _pinky._frightened, _pinky._move, _pinky._cacheMove, _pinky._direction.x, _pinky._direction.y, _pinky._directions.get(0), _pinky._directions.get(1), _pinky._cellX, _pinky._cellY, _pinky._passage));
+      writer.write(String.format("\n_clyde._position.x %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d _passage %b", _clyde._position.x, _clyde._position.y, _clyde._frightened, _pinky._move, _pinky._cacheMove, _clyde._direction.x, _clyde._direction.y, _clyde._directions.get(0), _clyde._directions.get(1), _clyde._cellX, _clyde._cellY, _clyde._passage));
+      writer.write(String.format("\n_game._gameState %s _timeNoPause %f", _gameState, _game._timeNoPause));
     }
     catch (IOException e) {
       e.printStackTrace();

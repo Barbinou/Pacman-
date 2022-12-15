@@ -22,6 +22,23 @@ class Blinky {
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); //position de PACMAN recupere
   }
 
+  Blinky(Board b, Hero h, PVector position, boolean frightened, int move, int cacheMove, PVector direction, int directions1, int directions2, int cellX, int cellY) {
+    _board = b;
+    _hero = h;
+    _position = position;
+    _cellY = cellY; 
+    _cellX = cellX;
+    _color = RED;
+    _frightened = frightened;
+    _move = move; // premier mouvement de blinky
+    _cacheMove = cacheMove;
+    _vitesse = VITESSE_GHOST;
+    _directions = new ArrayList<>();
+    _directions.add(directions1);
+    _directions.add(directions2);
+    _direction = direction;
+  }
+
   // pour les commentaires de cette partie se référé aussi à la classe Hero //
 
   void update() {
@@ -182,7 +199,7 @@ class Blinky {
     }
   }
 
-  void frightenedMode() { // changement d'pparence et de vitesse lors du FRIGHTENED 
+  void frightenedMode() { // changement d'pparence et de vitesse lors du FRIGHTENED
     if (_frightened) {
       _vitesse = 0.025;
       _color = BLUE;

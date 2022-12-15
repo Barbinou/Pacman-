@@ -15,7 +15,7 @@ class Hero {
 
   Hero(Board b) {  // constructeur de hero
     _board = b;
-    _overpowered = false; 
+    _overpowered = false;
     getCellHero();
     _life = 3;
     _score = 0;
@@ -41,13 +41,13 @@ class Hero {
         }
         break;
       default: // si la case n'est pas un mur
-        eat(); 
-        cacheMove(); 
+        eat();
+        cacheMove();
       }
     }
     catch(ArrayIndexOutOfBoundsException e) {  // gestion de l'erreur OutOfBounds pour replacer mon PACMAN
       eat();
-      println(e); 
+      println(e);
       if (e.toString().equals(ERROR)) { // si PACMAN est OutOfBounds à gauche alors je le repositionne à droite et inversement
         _position.x = width;
         _cellY = 22;
@@ -100,11 +100,11 @@ class Hero {
       _score += SCORE_DOT;
       break;
     case SUPER_DOT:
-      SUPER_DOT -= 1; 
+      SUPER_DOT -= 1;
       _board._cells[_cellX][_cellY] = TypeCell.EMPTY;
       _score += SCORE_SUPER_DOT;
-      _overpowered = true; 
-      break; 
+      _overpowered = true;
+      break;
     }
   }
 
@@ -147,7 +147,7 @@ class Hero {
       }
       break;
     }
-    oneUp(); 
+    oneUp();
   }
 
   void updateCellsHero() { // deplace PACMAN sur la grille
@@ -180,11 +180,11 @@ class Hero {
     textSize(CELL_SIZE_X*0.5);
     text(String.format("Score : %d", _score), _board._offset.x, height*0.05);
   }
-  
-  void oneUp(){ // permet d'augmenter ma vie quand j'atteint 10000 points 
-    if ((_score / ONE_UP) != _cacheLifeUp){  // on regarde si la division est differentes du nombre de vie gagnés au total 
+
+  void oneUp() { // permet d'augmenter ma vie quand j'atteint 10000 points
+    if ((_score / ONE_UP) != _cacheLifeUp) {  // on regarde si la division est differentes du nombre de vie gagnés au total
       _life += 1;
-      _cacheLifeUp += 1; 
+      _cacheLifeUp += 1;
     }
   }
 

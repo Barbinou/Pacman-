@@ -1,0 +1,29 @@
+
+xxxxxxxxxxxxxxxxxxxxxxx
+xooooooooooxoooooooooox
+xOxxxoxxxxoxoxxxxoxxxOx
+xoxxxoxxxxoxoxxxxoxxxox
+xooooooooooooooooooooox
+xoxxxoxoxxxxxxxoxoxxxox
+xoooooxooooxooooxooooox
+xxxxxoxxxxoxoxxxxoxxxxx
+VVVVxoxooooBooooxoxVVVV
+xxxxxoxoxxxDxxxoxoxxxxx
+ooooooooxVICRVxoooooooo
+xxxxxoxoxxxxxxxoxoxxxxx
+VVVVxoooooooooooooxVVVV
+xxxxxoxoxxxxxxxoxoxxxxx
+xooooooooooxoooooooooox
+xoxxxoxxxxoxoxxxxoxxxox
+xOooxooVVVVPooooooxooOx
+xxxoxoxVxxxxxxxoxoxoxxx
+xoooooxVVVVxooooxooooox
+xoxxxxxxxxVxoxxxxxxxxox
+xooooVVVVVVooooooooooox
+xxxxxxxxxxxxxxxxxxxxxxx
+_hero._position.x 186,999405 _hero._position.y 560,727295 _hero._overpowered false _hero._life 3 _hero._score 160
+_blinky._position.x 538,899841 _blinky._position.y 94,363632 _frightened false
+_inky._position.x 254,998062 _inky._position.y 352,882446 _frightened false
+_pinky._position.x 188,700058 _pinky._position.y 315,272705 _frightened false
+_clyde._position.x 595,002441 _clyde._position.y 384,554321 _frightened false
+_game._gameState CHASE
