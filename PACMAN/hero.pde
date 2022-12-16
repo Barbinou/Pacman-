@@ -17,16 +17,13 @@ class Hero {
     _board = b;
     _overpowered = false;
     getCellHero();
-    _life = 3;
+    _life = HERO_LIFE;
     _score = 0;
     _direction = new PVector (0, 0);
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); //position de PACMAN recupere
     _scoreFont = createFont("score.TTF", 128, true); // je créée ma font
   }
-
-  void launchMove(PVector dir) {
-  }
-
+  
   void move(float target) {
     try {
       switch(_board._cells[_cellX + (int)_direction.x][_cellY + (int) _direction.y]) { // je regarde la case devant moi
@@ -47,7 +44,6 @@ class Hero {
     }
     catch(ArrayIndexOutOfBoundsException e) {  // gestion de l'erreur OutOfBounds pour replacer mon PACMAN
       eat();
-      println(e);
       if (e.toString().equals(ERROR)) { // si PACMAN est OutOfBounds à gauche alors je le repositionne à droite et inversement
         _position.x = width;
         _cellY = 22;
@@ -96,6 +92,7 @@ class Hero {
   void eat() { // mange la cellule
     switch(_board._cells[_cellX][_cellY]) {
     case DOT:
+      DOT -= 1;
       _board._cells[_cellX][_cellY] = TypeCell.EMPTY;
       _score += SCORE_DOT;
       break;
@@ -187,6 +184,7 @@ class Hero {
       _cacheLifeUp += 1;
     }
   }
+  
 
   void getCellHero() { // permet de retouver la posX et Y de pacman dans la grille
     for (int x = 0; x < _board._cells.length; x++) {

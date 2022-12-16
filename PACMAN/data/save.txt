@@ -1,7 +1,8 @@
 
-_hero._position.x 508,301697 _position.y 168,000000 _direction.x 0,000000 _direction.y 1,000000 _overpowered false _life 3 _score 300 _cacheLife 0 _move 39 _cacheMove 0 _cellX 4 _cellY 15
-_blinky._position.x 357,000000 _position.y 134,954559 _frightened false _move 38 _cacheMove 39 _direction.x -1,000000 _direction.y 0,000000 _directions[0] 37 _directions[1] 38 _cellX 2 _cellY 10
-_inky._position.x 217,600067 _position.y 364,782532 _frightened false _move 39 _cacheMove 38 _direction.x 0,000000 _direction.y 1,000000 _directions[0] 40 _directions[1] 39 _cellX 12 _cellY 6 _passage true
+_hero._position.x 488,897766 _position.y 462,545441 _direction.x 0,000000 _direction.y -1,000000 _overpowered false _life 2 _score 320 _cacheLife 0 _move 37 _cacheMove 0 _cellX 16 _cellY 13
+_blinky._position.x 527,000000 _position.y 358,518311 _frightened false _move 40 _cacheMove 37 _direction.x 1,000000 _direction.y 0,000000 _directions[0] 40 _directions[1] 39 _cellX 12 _cellY 15
+_inky._position.x 268,599365 _position.y 217,090912 _frightened false _move 37 _cacheMove 38 _direction.x 0,000000 _direction.y -1,000000 _directions[0] 40 _directions[1] 37 _cellX 6 _cellY 7 _passage true
 _pinky._position.x 425,000000 _position.y 315,272705 _frightened false _move 37 _cacheMove 38 _direction.x 0,000000 _direction.y 0,000000 _directions[0] 37 _directions[1] 39 _cellX 10 _cellY 12 _passage false
-_clyde._position.x 639,199341 _position.y 217,090912 _frightened false _move 37 _cacheMove 38 _direction.x 0,000000 _direction.y -1,000000 _directions[0] 40 _directions[1] 37 _cellX 6 _cellY 18 _passage true
-_game._gameState CHASE _timeNoPause 3350,000000
+_clyde._position.x 355,300720 _position.y 267,881836 _frightened false _move 37 _cacheMove 38 _direction.x 0,000000 _direction.y 1,000000 _directions[0] 39 _directions[1] 40 _cellX 8 _cellY 10 _passage true
+_fruit._eatable true _numberFruits 1
+_game._gameState CHASE _timeNoPause 0,000000

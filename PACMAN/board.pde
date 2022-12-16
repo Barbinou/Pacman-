@@ -55,8 +55,13 @@ class Board {
         for (TypeCell type : TypeCell.values()) {  // on parcourt notre type qui est un TypeCell
           if (type.getChar() == lines[x].toCharArray()[y]) {
             _cells [x-1][y] = type;  // x-1 pour ne pas avoir des null a cause du titre
-            if (type == TypeCell.SUPER_DOT) {
+            switch (type) {
+            case SUPER_DOT:
               SUPER_DOT += 1;
+              break;
+            case DOT:
+              DOT += 1; 
+              break; 
             }
           }
         }
@@ -65,13 +70,13 @@ class Board {
   }
 
   void saveBoard(BufferedWriter writer) {
-    try { // try and catch obligatoire lors de l'ecriture 
-      for (int x = 0; x < _board._cells.length; x++) { // je parcours mon board 
+    try { // try and catch obligatoire lors de l'ecriture
+      for (int x = 0; x < _board._cells.length; x++) { // je parcours mon board
         writer.write("\n");
         for (int y = 0; y <_board._cells[x].length; y++) {
           for (TypeCell type : TypeCell.values()) { // je parcours tous mes types de TypeCell
-            if (_board._cells[x][y] == type)  
-              writer.write(type.getChar()); // j'ecris dans le fichier le char correpsondant au type de la cellule 
+            if (_board._cells[x][y] == type)
+              writer.write(type.getChar()); // j'ecris dans le fichier le char correpsondant au type de la cellule
           }
         }
       }
@@ -131,17 +136,17 @@ class Board {
   void centrage_de_mort() {
     CENTRAGE_DE_MORT =  (width % ((int) width / _nbCellsX)) / 2;  // calcul le nombre de pixels à droite de l'ecran et le divise par 2 pour centrer le board
   }
-  
-  void printBoard(){
+
+  void printBoard() {
     for (int x = 0; x < _cells.length; x++) {
       println();
-      for (int y = 0; y <_cells[x].length; y++) { 
-        print(_board._cells[x][y] + " "); 
+      for (int y = 0; y <_cells[x].length; y++) {
+        print(_board._cells[x][y] + " ");
       }
     }
   }
 
-  void drawIt() { 
+  void drawIt() {
     drawBoard();
   }
 }

@@ -6,11 +6,11 @@ SoundFile frightenedMusic, chaseMusic;
 File path;
 
 void setup() {
-  size(800, 600, P2D); 
-  frightenedMusic = new SoundFile(this, "music/castevania2.wav"); // creation des musiques 
+  size(800, 600, P2D);
+  frightenedMusic = new SoundFile(this, "music/castevania2.wav"); // creation des musiques
   chaseMusic = new SoundFile(this, "music/Aggresivity_7.wav");
-  path = new File(sketchPath("")); // creation d'un objet file pour pouvoir avoir le chemin absolu 
-  _game = new Game(path.getAbsolutePath()); // permet d'obtenir le chemin absolu pour enregister mon fichier 
+  path = new File(sketchPath("")); // creation d'un objet file pour pouvoir avoir le chemin absolu
+  _game = new Game(path.getAbsolutePath()); // permet d'obtenir le chemin absolu pour enregister mon fichier
 }
 
 void draw() {
@@ -43,18 +43,25 @@ void music() { // fonction qui gère la musique
       chaseMusic.stop();
       _game._musicC = true;
     }
+    break;
+  case "END":
+    chaseMusic.stop();
   }
 }
 
 void keyPressed() {
   if (key == ESC && keyPressed) {
     key = 0;
-    if (_game._gameRetry) { // si je recommence la partie 
+    if (_game._gameRetry) { // si je recommence la partie
       _game._gameRetry = false;
-      _game._menu._time = millis(); // je reiniialise le time menu 
+      _game._menu._time = millis(); // je reiniialise le time menu
     }
     _game._gamePaused = true;
-    _game._menu._time = millis() - _game._timeNoPause; // je conserve le temps du menu 
+    _game._menu._time = millis() - _game._timeNoPause; // je conserve le temps du menu
+  } else if (keyCode != BACKSPACE && _game._menu._pseudo.length() < 3 && key >= 'a' && key <= 'z') {
+    _game._menu._pseudo += key;
+  } else if (keyCode == BACKSPACE && _game._menu._pseudo.length() > 0) {
+    _game._menu._pseudo = _game._menu._pseudo.substring(0, _game._menu._pseudo.length() - 1);
   }
   _game.handleKey(key);
 }
