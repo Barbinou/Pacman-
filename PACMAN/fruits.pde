@@ -25,7 +25,7 @@ class Fruits {
   }
 
   void drawIt() {
-    if (millis() - _game._timeNoPause >= 5000 && _numberFruits != 0) {
+    if (millis() - _game._timeNoPause >= 30000 && _numberFruits != 0) {
       _eatable = true;
       if (_eatable) {
         drawFruit();

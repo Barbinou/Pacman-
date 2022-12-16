@@ -11,19 +11,34 @@ class Hero {
   Board _board;
 
   PVector _direction;
-  boolean _moving, _overpowered; // is moving ?
+  boolean _overpowered; 
 
   Hero(Board b) {  // constructeur de hero
     _board = b;
     _overpowered = false;
     getCellHero();
     _life = HERO_LIFE;
-    _score = 0;
+    _score = SCORE_START;
     _direction = new PVector (0, 0);
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); //position de PACMAN recupere
     _scoreFont = createFont("score.TTF", 128, true); // je créée ma font
   }
-  
+
+  Hero(Board b, PVector position, PVector direction, boolean overpowered, int life, int score, int cacheLifeUp, int move, int cacheMove, int cellX, int cellY) {  // constructeur de hero
+    _board = b;
+    _overpowered = overpowered;
+    _cellX = cellX;
+    _cellY = cellY; 
+    _life = life;
+    _score = score;
+    _direction = direction;
+    _position = position;
+    _cacheLifeUp = cacheLifeUp;
+    _move = move;
+    _cacheMove = cacheMove; 
+    _scoreFont = createFont("score.TTF", 128, true); // je créée ma font
+  }
+
   void move(float target) {
     try {
       switch(_board._cells[_cellX + (int)_direction.x][_cellY + (int) _direction.y]) { // je regarde la case devant moi
@@ -55,7 +70,7 @@ class Hero {
   }
 
   void cacheMove() {  // gestion du mouvement cache
-    switch (_cacheMove) { // regarde si la casse corespondante au _cacheMove n'est pas un WALL pour se diriger dans le sens de _cacheMove au lieu de _move
+    switch (_cacheMove) { // regarde si la case corespondante au _cacheMove n'est pas un WALL pour se diriger dans le sens de _cacheMove au lieu de _move
     case UP:
       if (_board._cells[_cellX - 1][_cellY] != TypeCell.WALL) {
         deleteCacheMove();
@@ -161,7 +176,8 @@ class Hero {
   void drawPacman () {
     noStroke();
     fill(YELLOW);
-    ellipse(_position.x + _board._offset.x, _position.y, (width /_board._nbCellsY)*0.5, (height / _board._nbCellsX)*0.5); // PACMAN
+    //PACMAN avec une hauteur et largeur "gale à la moitie de la case
+    ellipse(_position.x + _board._offset.x, _position.y, (width /_board._nbCellsY)*0.5, (height / _board._nbCellsX)*0.5);
   }
 
   void drawLife() { // dessine la vie
@@ -178,19 +194,21 @@ class Hero {
     text(String.format("Score : %d", _score), _board._offset.x, height*0.05);
   }
 
-  void oneUp() { // permet d'augmenter ma vie quand j'atteint 10000 points
-    if ((_score / ONE_UP) != _cacheLifeUp) {  // on regarde si la division est differentes du nombre de vie gagnés au total
+  void oneUp() { // permet d'augmenter ma vie quand j'atteins 10000 points
+    if ((_score / ONE_UP) != _cacheLifeUp) {  // on regarde si la division est differente du nombre de vie gagnées au total
       _life += 1;
       _cacheLifeUp += 1;
     }
   }
-  
+
 
   void getCellHero() { // permet de retouver la posX et Y de pacman dans la grille
+    // double boucle pour parcourir le tableau 2D
     for (int x = 0; x < _board._cells.length; x++) {
       for (int y = 0; y < _board._cells[x].length; y++) {
-        switch (_board._cells[x][y]) {
+        switch (_board._cells[x][y]) { // si le type de la cellule est PACMAN
         case PACMAN:
+          // je prends les coordonnées X et Y du tableau
           _cellX = x;
           _cellY = y;
         }

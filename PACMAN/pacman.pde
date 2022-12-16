@@ -22,21 +22,24 @@ void draw() {
 
 void music() { // fonction qui gère la musique
   switch(_game._gameState) { // je regarde en quel mode je suis
-  case "FRIGHTENED":
+  case FRIGHTENED:
     if (_game._musicF && !_game._gamePaused) {
       chaseMusic.stop();
-      frightenedMusic.stop(); // quand je prolonge mon mode je n'est pas la musique qui se superpose
+      // lorsque le mode est prolongé la musique ne se superpose pas
+      frightenedMusic.stop();
       frightenedMusic.play();
+      // _game._musicF permet de pas relire à chaque frame la musique
       _game._musicF = false;
     } else if (_game._gamePaused) {
       frightenedMusic.stop();
       _game._musicF = true;
     }
     break;
-  case "CHASE":
+  case CHASE:
     if (_game._musicC && !_game._gamePaused) {
       frightenedMusic.stop();
       chaseMusic.loop();
+      //regle le volume de la musique
       chaseMusic.amp(0.7);
       _game._musicC = false;
     } else if (_game._gamePaused) {
@@ -44,7 +47,7 @@ void music() { // fonction qui gère la musique
       _game._musicC = true;
     }
     break;
-  case "END":
+  case END:
     chaseMusic.stop();
   }
 }
@@ -58,9 +61,14 @@ void keyPressed() {
     }
     _game._gamePaused = true;
     _game._menu._time = millis() - _game._timeNoPause; // je conserve le temps du menu
-  } else if (keyCode != BACKSPACE && _game._menu._pseudo.length() < 3 && key >= 'a' && key <= 'z') {
+  }
+  // Si la touche pressée n'est pas BACKSPACE et que la longueur du pseudo est inférieure à 3
+  // la touche pressée est une lettre de l'alphabet en minuscule
+  else if (keyCode != BACKSPACE && _game._menu._pseudo.length() < 3 && key >= LETTER_A && key <= LETTER_Z) {
     _game._menu._pseudo += key;
-  } else if (keyCode == BACKSPACE && _game._menu._pseudo.length() > 0) {
+  } 
+  // Sinon, si la touche pressée est BACKSPACE et que la longueur du pseudo est supérieure à 0
+  else if (keyCode == BACKSPACE && _game._menu._pseudo.length() > 0) {
     _game._menu._pseudo = _game._menu._pseudo.substring(0, _game._menu._pseudo.length() - 1);
   }
   _game.handleKey(key);

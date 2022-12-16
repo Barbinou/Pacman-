@@ -1,32 +1,3 @@
-public enum TypeCell {
-  EMPTY ('V', BLACK), // EMPTY est un objet qui contient un char et une couleur
-    WALL ('x', DARK_BLUE),
-    DOT ('o', WHITE),
-    SUPER_DOT('O', WHITE),
-    PACMAN ('P', YELLOW),
-    BLINKY ('B', RED),
-    PINKY('R', PINK),
-    INKY ('I', LIGHT_BLUE),
-    CLYDE('C', ORANGE),
-    DOOR('D', BROWN);
-
-  final char CHARACTER;
-  final color COL;
-
-  TypeCell(char character, color col) {  // constructeur
-    CHARACTER = character;
-    COL = col;
-  }
-
-  char getChar() {  // fonction pour avoir les attributs de la classe
-    return CHARACTER;
-  }
-
-  color getCol() {
-    return COL;
-  }
-}
-
 class Board {
   TypeCell _cells[][];
   PVector _position, _offset;  // position du labyrinthe

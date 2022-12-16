@@ -27,7 +27,7 @@ class Inky {
     _board = b;
     _hero = h;
     _position = position;
-    _cellY = cellY; 
+    _cellY = cellY;
     _cellX = cellX;
     _passage = passage;
     _vitesse = VITESSE_GHOST;

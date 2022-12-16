@@ -26,7 +26,7 @@ class Blinky {
     _board = b;
     _hero = h;
     _position = position;
-    _cellY = cellY; 
+    _cellY = cellY;
     _cellX = cellX;
     _color = RED;
     _frightened = frightened;
@@ -199,7 +199,7 @@ class Blinky {
     }
   }
 
-  void frightenedMode() { // changement d'pparence et de vitesse lors du FRIGHTENED
+  void frightenedMode() { // changement d'apparence et de vitesse lors du FRIGHTENED
     if (_frightened) {
       _vitesse = 0.025;
       _color = BLUE;

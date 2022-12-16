@@ -1,25 +1,5 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-
-public enum TypeSave {
-  HERO ("_hero._position.x"),
-    BLINKY ("_blinky._position.x"),
-    INKY ("_inky._position.x"),
-    PINKY ("_pinky._position.x"),
-    CLYDE ("_clyde._position.x"),
-    GAME ("_game._gameState");
-
-  final String TYPESAVE;
-
-  TypeSave(String typesave) {  // constructeur
-    TYPESAVE = typesave;
-  }
-
-  String getType() {
-    return TYPESAVE;
-  }
-}
-
 class Menu {
 
   Blinky _blinky;
@@ -29,26 +9,27 @@ class Menu {
   Fruits _fruit;
 
   float _backgroundPosX, _backgroundPosY, _time;
-  boolean _highscoreMenu, _oneValue;
+  boolean _highscoreMenu, _possibilitySaveName;
   String [] _highscore;
   String _pseudo;
 
   Menu(Game g, Board b) {
     _game = g;
     _board = b;
-    _pseudo = "aaa";
-    _highscore = loadStrings("highscore.txt");
+    _pseudo = DEFAULT_NAME;
+    _highscore = loadStrings(HIGHSCORE_FILE);
+    // position du background au millieu de l'écran
     _backgroundPosX = width*0.5;
     _backgroundPosY = height*0.5;
     _highscoreMenu = false;
-    _oneValue = true;
+    _possibilitySaveName = true;
     _time = millis(); // enregistre le temps passé avant l'apparition du menu
   }
 
   Menu(Game g, Board b, float t) { // overload du constructeur pour la gestion de la second pause et plus
     _game = g;
     _board = b;
-    _pseudo = "aaa";
+    _pseudo = DEFAULT_NAME;
     _backgroundPosX = width*0.5;
     _backgroundPosY = height*0.5;
     _highscoreMenu = false;
@@ -56,69 +37,74 @@ class Menu {
   }
 
   void drawIt() {
-    if (!_game._gameState.equals("END") && !_highscoreMenu) {
-      drawBackground();
-      drawCases(MENU_PAUSE);
-    } else if (_highscoreMenu) {
-      drawBackground();
-      drawCases(_highscore);
-    } else if (DOT == 0) {
-      drawBackground();
-      if (_game._hero._score >= Integer.parseInt(split(_highscore[_highscore.length - 1], " ")[1]) && _oneValue) {
-        drawCases(END_FLAWLESS);
-        endTitle("FLAWLESS VICTORY");
-        fill(WHITE);
-        text(String.format("Name %s : %d", _pseudo.toUpperCase(), _game._hero._score), _backgroundPosX, _backgroundPosY*MIN_MENU_Y);
+    drawBackground();
+    // Si le jeu n'est pas terminé
+    if (_game._gameState != GameState.END) {
+      // Si le menu des highscores n'est pas affiché
+      if (!_highscoreMenu) {
+        // Affiche le menu de pause
+        drawCases(MENU_PAUSE);
       } else {
-        drawCases(END_VICTOIRE);
-        endTitle("VICTORY");
+        drawCases(_highscore);
       }
     } else {
-      drawBackground();
-      if (_game._hero._score >= Integer.parseInt(split(_highscore[_highscore.length - 1], " ")[1]) && _oneValue) {
+      // Si le menu des highscores est affiché
+      if (_highscoreMenu) {
+        endTitle("HIGHSCORES");
+        // Affiche le menu des highscores
+        drawCases(_highscore);
+      } else if (_game._hero._score >= Integer.parseInt(split(_highscore[_highscore.length - 1], " ")[1]) && _possibilitySaveName) {
+        // Si le score est supérieur ou égal au dernier highscore et si _possibilitySaveName est vrai
+        // Affiche l'écran de victoire et defaite tout en pouvant enregistrer mon score
         drawCases(END_FLAWLESS);
-        endTitle("FLAWLESS VICTORY");
+        // Affiche l'écran de victoire
+        if (DOT == 0) {
+          endTitle("FLAWLESS VICTORY");
+        } else { // Affiche l'écran de défaite
+          endTitle("DEFEAT");
+        }
+        // Affiche le nom et le score
         fill(WHITE);
         text(String.format("Name %s : %d", _pseudo.toUpperCase(), _game._hero._score), _backgroundPosX, _backgroundPosY*MIN_MENU_Y);
-      } else if (_game._hero._score >= Integer.parseInt(split(_highscore[_highscore.length - 1], " ")[1]) && _oneValue) {
-        drawCases(END_VICTOIRE);
-        endTitle("ANOTHER TRY");
       } else {
-        drawCases(END_DEFAITE);
-        endTitle("GAME OVER");
+        // Si j'ai deja enregistrer mon score ou que mon score n'est pas plus grand que le plus petit highscore
+        if (DOT == 0) {
+          drawCases(END_VICTOIRE);
+          endTitle("VICTORY");
+        } else {
+          drawCases(END_DEFAITE);
+          endTitle("GAME OVER");
+        }
       }
     }
   }
 
-  void endTitle(String title) {
+  void endTitle(String title) { // titre de fin
     textAlign(CENTER, CENTER);
     textSize(CELL_SIZE_X*0.8);
     fill(YELLOW);
+    // Le texte est positionné au milieu de l'écran à un dixieme de la hauteur
     text(title, width/2, height*0.1);
   }
 
-  void drawBackground() { // dessine le background noir et jaune
-    if (!_game._gameState.equals("END")) {
-      rectMode(CORNER);
-      fill(BLACK);
-      rect(0, height*0.09, width, height);
-      rectMode(CORNER);
-      fill(YELLOW);
-      rect(width * 0.2, height*0.2, width*0.6, height*0.7, ARRONDI);
-    } else {
-      rectMode(CORNER);
-      fill(BLACK);
-      rect(0, 0, width, height);
-      fill(YELLOW);
-      rect(width * 0.2, height*0.2, width*0.6, height*0.7, ARRONDI);
-    }
+  void drawBackground() { // background lors de la pause
+    rectMode(CORNER);
+    fill(BLACK);
+    // Sa hauteur est de la hauteur de l'écran, sauf si l'état du jeu est "END", auquel cas elle est de 0
+    rect(0, _game._gameState != GameState.END ? height * 0.09 : 0, width, height);
+    fill(YELLOW);
+    // hauteur et sa largeur sont respectivement de 70% et 60% de celles de l'écran
+    rect(width * 0.2, height * 0.2, width * 0.6, height * 0.7, ARRONDI);
   }
 
   void drawCases(String[] writeMenu) { // dessine les cases
     rectMode(CENTER);
     int j = 0;
+    // boucle qui me permet d'avoir toujours les éléments de writeMenu dans le carré jaune
     for (float i = MIN_MENU_Y; i < MAX_MENU_Y; i += (float) 1 / (writeMenu.length - 1)) {
       hitboxCase(i, j, writeMenu);
+      // dessine les rectangles contenant le texte de writeMenu
+      // positionY et une hauteur respectivement en fonction de i et de la longueur du tableau writeMenu
       rect(_backgroundPosX, _backgroundPosY*i, _backgroundPosX, _backgroundPosY / (writeMenu.length + 1), ARRONDI);
       textAlign(CENTER, CENTER);
       fill(WHITE);
@@ -128,157 +114,188 @@ class Menu {
   }
 
   void optionMenu(int j, String[] writeMenu) {
-    switch(writeMenu[j]) {
-    case "Continuer":
-      if (mouseButton == LEFT && mousePressed) {
-        mousePressed = false; 
-        endPause();
-      }
-      break;
-    case "Sauvegarder":
-      if (mouseButton == LEFT && mousePressed) {
-        try {
-          BufferedWriter writer = new BufferedWriter(new FileWriter(_game._path + "/data/boardSave.txt")); // creattion du fichier save.txt
-          _board.saveBoard(writer);
-          writer.close(); // fermeture du fichier
+    String argument = writeMenu[j];
+    try {
+      switch(Option.valueOf(argument)) {
+      case CONTINUER:
+        if (mouseButton == LEFT && mousePressed) {
+          // Mettre à jour la valeur de mousePressed
+          mousePressed = false;
+          // retour au jeu
+          endPause();
         }
-        catch (IOException e) {
-          e.printStackTrace();
-        }
-
-        try {
-          BufferedWriter writer = new BufferedWriter(new FileWriter(_game._path + "/data/Save.txt")); // creattion du fichier save.txt
-          _game.saveGame(writer);
-          writer.close();
-        }
-        catch (IOException e) {
-          e.printStackTrace();
-        }
-        endPause();
-      }
-      break;
-    case "Charger":
-      if (mouseButton == LEFT && mousePressed) {
-
-        mousePressed = false;
-        String boardSave [] = loadStrings("boardSave.txt"); // charge la sauvegarde
-        String gameSave [] = loadStrings("save.txt"); // charge la sauvegarde
-        String gameSaveBoard [] = new String [_game._board._nbCellsX];
-
-        Board board;
-        Hero hero;
-        Blinky blinky;
-        Inky inky;
-        Pinky pinky;
-        Clyde clyde;
-        Fruits fruit; 
-
-        for (int i = 1; i < 23; i++) {
-          gameSaveBoard[i] = boardSave[i];
-        }
-
-        board = new Board(gameSaveBoard);
-        hero = new Hero(board);
-
-        for (int i = 1; i < gameSave.length; i++) {
-          gameSave[i] = gameSave[i].replace(',', '.');
-          switch (split(gameSave[i], " ")[0]) {
-          case "_hero._position.x": // changer par un enum
-            hero._position.x = Float.parseFloat(split(gameSave[i], " ")[1]);
-            hero._position.y = Float.parseFloat(split(gameSave[i], " ")[3]);
-            hero._direction.x = Float.parseFloat(split(gameSave[i], " ")[5]);
-            hero._direction.y = Float.parseFloat(split(gameSave[i], " ")[7]);
-            hero._overpowered = Boolean.parseBoolean(split(gameSave[i], " ")[9]);
-            hero._life = Integer.parseInt(split(gameSave[i], " ")[11]);
-            hero._score = Integer.parseInt(split(gameSave[i], " ")[13]);
-            hero._cacheLifeUp = Integer.parseInt(split(gameSave[i], " ")[15]);
-            hero._move = Integer.parseInt(split(gameSave[i], " ")[17]);
-            hero._cacheMove = Integer.parseInt(split(gameSave[i], " ")[19]);
-            hero._cellX = Integer.parseInt(split(gameSave[i], " ")[21]);
-            hero._cellY = Integer.parseInt(split(gameSave[i], " ")[23]);
-            break;
-          case "_blinky._position.x":
-            _blinky = new Blinky(board, hero, new PVector(Float.parseFloat(split(gameSave[i], " ")[1]), Float.parseFloat(split(gameSave[i], " ")[3])), Boolean.parseBoolean(split(gameSave[i], " ")[5]), Integer.parseInt(split(gameSave[i], " ")[7]), Integer.parseInt(split(gameSave[i], " ")[9]), new PVector(Float.parseFloat(split(gameSave[i], " ")[11]), Float.parseFloat(split(gameSave[i], " ")[13])), Integer.parseInt(split(gameSave[i], " ")[15]), Integer.parseInt(split(gameSave[i], " ")[17]), Integer.parseInt(split(gameSave[i], " ")[19]), Integer.parseInt(split(gameSave[i], " ")[21]));
-            break;
-          case "_inky._position.x":
-            _inky = new Inky(board, hero, new PVector(Float.parseFloat(split(gameSave[i], " ")[1]), Float.parseFloat(split(gameSave[i], " ")[3])), Boolean.parseBoolean(split(gameSave[i], " ")[5]), Integer.parseInt(split(gameSave[i], " ")[7]), Integer.parseInt(split(gameSave[i], " ")[9]), new PVector(Float.parseFloat(split(gameSave[i], " ")[11]), Float.parseFloat(split(gameSave[i], " ")[13])), Integer.parseInt(split(gameSave[i], " ")[15]), Integer.parseInt(split(gameSave[i], " ")[17]), Integer.parseInt(split(gameSave[i], " ")[19]), Integer.parseInt(split(gameSave[i], " ")[21]), Boolean.parseBoolean(split(gameSave[i], " ")[23]));
-            break;
-          case "_pinky._position.x":
-            _pinky = new Pinky(board, hero, new PVector(Float.parseFloat(split(gameSave[i], " ")[1]), Float.parseFloat(split(gameSave[i], " ")[3])), Boolean.parseBoolean(split(gameSave[i], " ")[5]), Integer.parseInt(split(gameSave[i], " ")[7]), Integer.parseInt(split(gameSave[i], " ")[9]), new PVector(Float.parseFloat(split(gameSave[i], " ")[11]), Float.parseFloat(split(gameSave[i], " ")[13])), Integer.parseInt(split(gameSave[i], " ")[15]), Integer.parseInt(split(gameSave[i], " ")[17]), Integer.parseInt(split(gameSave[i], " ")[19]), Integer.parseInt(split(gameSave[i], " ")[21]), Boolean.parseBoolean(split(gameSave[i], " ")[23]));
-            break;
-          case "_clyde._position.x":
-            _clyde = new Clyde(board, hero, new PVector(Float.parseFloat(split(gameSave[i], " ")[1]), Float.parseFloat(split(gameSave[i], " ")[3])), Boolean.parseBoolean(split(gameSave[i], " ")[5]), Integer.parseInt(split(gameSave[i], " ")[7]), Integer.parseInt(split(gameSave[i], " ")[9]), new PVector(Float.parseFloat(split(gameSave[i], " ")[11]), Float.parseFloat(split(gameSave[i], " ")[13])), Integer.parseInt(split(gameSave[i], " ")[15]), Integer.parseInt(split(gameSave[i], " ")[17]), Integer.parseInt(split(gameSave[i], " ")[19]), Integer.parseInt(split(gameSave[i], " ")[21]), Boolean.parseBoolean(split(gameSave[i], " ")[23]));
-            break;
-          case "_fruit._eatable":
-            _fruit = new Fruits(board, hero, Boolean.parseBoolean(split(gameSave[i], " ")[1]), Integer.parseInt(split(gameSave[i], " ")[3]));
-            break; 
-          }
-        }
-        gameSave[gameSave.length - 1] = gameSave[gameSave.length - 1].replace(',', '.');
-        _game = new Game(path.getAbsolutePath(), board, hero, _blinky, _inky, _pinky, _clyde, _fruit, split(gameSave[gameSave.length - 1], " ")[1], Float.parseFloat(split(gameSave[gameSave.length - 1], " ")[3]));
-        endPause();
-      }
-      break;
-    case "Recommencer":
-      if (mouseButton == LEFT && mousePressed) {
-        mousePressed = false;  // permet de ne plus enregistrer la touche comme appuyé
-        _game = new Game(path.getAbsolutePath());
-        _game._menu._time = millis();  // garde en mémoire le reset
-        _game._timeNoPause = millis();  // permet de remettre les conditions de sortie au débuts
-        _game._gameRetry = true;
-      }
-      break;
-    case "Highscores":
-      if (mouseButton == LEFT && mousePressed) {
-        _highscoreMenu = true;
-        mousePressed = false;
-      }
-      break;
-    case "Quitter":
-      if (mouseButton == LEFT && mousePressed) {
-        exit();
-      }
-      break;
-    default:
-      if (mouseButton == LEFT && mousePressed) {
-        mousePressed = false;
-        if (_pseudo.length() == 3) {
-          for (int i = _highscore.length - 1; i >= 0; i--) {
-            if (Integer.parseInt(split(_highscore[i], " ")[1]) <= _game._hero._score && _oneValue) {
-              _highscore[i] = String.format("%s %d", _pseudo.toUpperCase(), _game._hero._score);
-              _oneValue = false;
-            }
-          }
-          // Trier la liste en utilisant une expression lambda
-          Arrays.sort(_highscore, (s1, s2) -> {
-            // Récupérer le nombre dans chaque chaîne de caractères
-            int v1 = Integer.parseInt(split(s1, " ")[1]);
-            int v2 = Integer.parseInt(split(s2, " ")[1]);
-            return Integer.compare(v2, v1);
-          }
-          );
-          try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(_game._path + "/data/highscore.txt")); // creattion du fichier save.txt
-            for (int i = 0; i < _highscore.length; i++) {
-              if (i == 0) {
-                writer.write(_highscore[i]);
-              } else {
-                writer.write("\n" + _highscore[i]);
-              }
-            }
-            writer.close(); // fermeture du fichier
+        break;
+      case SAUVEGARDER:
+        if (mouseButton == LEFT && mousePressed) {
+          mousePressed = false;
+          // creation d'un objet qui permet d'écrire dans un fichier
+          try (BufferedWriter writer = new BufferedWriter(new FileWriter(_game._path + DATA_BOARD_SAVE_FILE))) {
+            // enregiste l'état du plateau
+            _board.saveBoard(writer);
           }
           catch (IOException e) {
             e.printStackTrace();
           }
-          _highscoreMenu = false;
-          break;
+          try (BufferedWriter writer = new BufferedWriter(new FileWriter(_game._path + DATA_GAME_SAVE_FILE))) {
+            // enregiste l'état de la partie
+            _game.saveGame(writer);
+          }
+          catch (IOException e) {
+            e.printStackTrace();
+          }
+          endPause();
+        }
+        break;
+      case CHARGER:
+        if (mouseButton == LEFT && mousePressed) {
+          mousePressed = false;
+          // charge les deux fichiers de sauvegardes
+          String boardSave [] = loadStrings(BOARD_SAVE_FILE);
+          String gameSave [] = loadStrings(GAME_SAVE_FILE);
+
+          Board board;
+          Hero hero;
+          Blinky blinky;
+          Inky inky;
+          Pinky pinky;
+          Clyde clyde;
+          Fruits fruit;
+
+          board = new Board(boardSave);
+          hero = new Hero(board);
+
+          for (int i = 1; i < gameSave.length; i++) {
+            // String.format() les float sont sauvegarde avec des virgules
+            // replace permet de corriger ce souci
+            gameSave[i] = gameSave[i].replace(COMMA, POINT);
+            String object = split(gameSave[i], SEPARATOR)[0];
+            switch (Object.valueOf(object)) {
+            case HERO:
+              /* load de Hero(Board b, PVector position, PVector direction, boolean overpowered, int life, int score, int cacheLifeUp, int move, int cacheMove,
+               int cellX, int cellY)*/
+              hero = new Hero(board, new PVector(Float.parseFloat(split(gameSave[i], SEPARATOR)[1]), Float.parseFloat(split(gameSave[i], SEPARATOR)[3])),
+                new PVector (Float.parseFloat(split(gameSave[i], SEPARATOR)[5]), Float.parseFloat(split(gameSave[i], SEPARATOR)[7])),
+                Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[9]), Integer.parseInt(split(gameSave[i], SEPARATOR)[11]), Integer.parseInt(split(gameSave[i], SEPARATOR)[13]),
+                Integer.parseInt(split(gameSave[i], SEPARATOR)[15]), Integer.parseInt(split(gameSave[i], SEPARATOR)[17]), Integer.parseInt(split(gameSave[i], SEPARATOR)[19]),
+                Integer.parseInt(split(gameSave[i], SEPARATOR)[21]), Integer.parseInt(split(gameSave[i], SEPARATOR)[23]));
+              break;
+            case BLINKY:
+              /* load de Blinky(Board b, Hero h, PVector position, boolean frightened, int move, int cacheMove, PVector direction, int directions1, int directions2,
+               int cellX, int cellY)*/
+              _blinky = new Blinky(board, hero, new PVector(Float.parseFloat(split(gameSave[i], SEPARATOR)[1]), Float.parseFloat(split(gameSave[i], SEPARATOR)[3])),
+                Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[5]), Integer.parseInt(split(gameSave[i], SEPARATOR)[7]), Integer.parseInt(split(gameSave[i], SEPARATOR)[9]),
+                new PVector(Float.parseFloat(split(gameSave[i], SEPARATOR)[11]), Float.parseFloat(split(gameSave[i], SEPARATOR)[13])), Integer.parseInt(split(gameSave[i], SEPARATOR)[15]),
+                Integer.parseInt(split(gameSave[i], SEPARATOR)[17]), Integer.parseInt(split(gameSave[i], SEPARATOR)[19]), Integer.parseInt(split(gameSave[i], SEPARATOR)[21]));
+              break;
+            case INKY:
+              /* load de Inky (Board b, Hero h, PVector position, boolean frightened, int move, int cacheMove, PVector direction, int directions1, int directions2, int cellX,
+               int cellY, boolean passage)*/
+              _inky = new Inky(board, hero, new PVector(Float.parseFloat(split(gameSave[i], SEPARATOR)[1]), Float.parseFloat(split(gameSave[i], SEPARATOR)[3])),
+                Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[5]), Integer.parseInt(split(gameSave[i], SEPARATOR)[7]), Integer.parseInt(split(gameSave[i], SEPARATOR)[9]),
+                new PVector(Float.parseFloat(split(gameSave[i], SEPARATOR)[11]), Float.parseFloat(split(gameSave[i], SEPARATOR)[13])), Integer.parseInt(split(gameSave[i], SEPARATOR)[15]),
+                Integer.parseInt(split(gameSave[i], SEPARATOR)[17]), Integer.parseInt(split(gameSave[i], SEPARATOR)[19]), Integer.parseInt(split(gameSave[i], SEPARATOR)[21]),
+                Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[23]));
+              break;
+            case PINKY:
+              /* load de Pinky (Board b, Hero h, PVector position, boolean frightened, int move, int cacheMove, PVector direction, int directions1, int directions2, int cellX,
+               int cellY, boolean passage)*/
+              _pinky = new Pinky(board, hero, new PVector(Float.parseFloat(split(gameSave[i], SEPARATOR)[1]), Float.parseFloat(split(gameSave[i], SEPARATOR)[3])),
+                Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[5]), Integer.parseInt(split(gameSave[i], SEPARATOR)[7]), Integer.parseInt(split(gameSave[i], SEPARATOR)[9]),
+                new PVector(Float.parseFloat(split(gameSave[i], SEPARATOR)[11]), Float.parseFloat(split(gameSave[i], SEPARATOR)[13])), Integer.parseInt(split(gameSave[i], SEPARATOR)[15]),
+                Integer.parseInt(split(gameSave[i], SEPARATOR)[17]), Integer.parseInt(split(gameSave[i], SEPARATOR)[19]), Integer.parseInt(split(gameSave[i], SEPARATOR)[21]),
+                Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[23]));
+              break;
+            case CLYDE:
+              /* load de Clyde (Board b, Hero h, PVector position, boolean frightened, int move, int cacheMove, PVector direction, int directions1, int directions2, int cellX,
+               int cellY, boolean passage)*/
+              _clyde = new Clyde(board, hero, new PVector(Float.parseFloat(split(gameSave[i], SEPARATOR)[1]), Float.parseFloat(split(gameSave[i], SEPARATOR)[3])),
+                Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[5]), Integer.parseInt(split(gameSave[i], SEPARATOR)[7]), Integer.parseInt(split(gameSave[i], SEPARATOR)[9]),
+                new PVector(Float.parseFloat(split(gameSave[i], SEPARATOR)[11]), Float.parseFloat(split(gameSave[i], SEPARATOR)[13])), Integer.parseInt(split(gameSave[i], SEPARATOR)[15]),
+                Integer.parseInt(split(gameSave[i], SEPARATOR)[17]), Integer.parseInt(split(gameSave[i], SEPARATOR)[19]), Integer.parseInt(split(gameSave[i], SEPARATOR)[21]),
+                Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[23]));
+              break;
+            case FRUIT:
+              // load de Fruits (Board b, Hero h, boolean eatable, int numberFruits)
+              _fruit = new Fruits(board, hero, Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[1]), Integer.parseInt(split(gameSave[i], SEPARATOR)[3]));
+              break;
+            case GAME:
+              _game = new Game(path.getAbsolutePath(), board, hero, _blinky, _inky, _pinky, _clyde, _fruit, GameState.valueOf(split(gameSave[gameSave.length - 1], SEPARATOR)[1]),
+                Float.parseFloat(split(gameSave[gameSave.length - 1], SEPARATOR)[3]));
+              break;
+            }
+          }
+        }
+        break;
+      case RECOMMENCER:
+        if (mouseButton == LEFT && mousePressed) {
+          mousePressed = false;  // permet de ne plus enregistrer la touche comme appuyé
+          _game = new Game(path.getAbsolutePath());
+          _game._menu._time = millis();  // garde en mémoire le reset
+          _game._timeNoPause = millis();  // permet de remettre les conditions de sortie au débuts
+          _game._gameRetry = true;
+        }
+        break;
+      case HIGHSCORE:
+        if (mouseButton == LEFT && mousePressed) {
+          _highscoreMenu = true;
+          mousePressed = false;
+        }
+        break;
+      case QUITTER:
+        if (mouseButton == LEFT && mousePressed) {
+          exit();
+        }
+        break;
+      default:
+        if (mouseButton == LEFT && mousePressed) {
+          mousePressed = false;
+          if (_pseudo.length() == 3) {
+            // Parcourir le tableau _highscore de la fin vers le début
+            for (int i = _highscore.length - 1; i >= 0; i--) {
+              // Si la valeur du score dans le tableau _highscore est inférieure au score du héros et que je n'ai pas encore sauvegardé mon nom
+              if (Integer.parseInt(split(_highscore[i], SEPARATOR)[1]) <= _game._hero._score && _possibilitySaveName) {
+                // Mettre à jour la valeur de _highscore
+                _highscore[i] = String.format("%s %d", _pseudo.toUpperCase(), _game._hero._score);
+                _possibilitySaveName = false;
+              }
+            }
+            // Trier la liste en utilisant une expression lambda
+            Arrays.sort(_highscore, (s1, s2) -> {
+              // Récupérer le nombre dans chaque chaîne de caractères
+              int v1 = Integer.parseInt(split(s1, SEPARATOR)[1]);
+              int v2 = Integer.parseInt(split(s2, SEPARATOR)[1]);
+              // Comparer les valeurs v1 et v2 et renvoyer le résultat
+              return Integer.compare(v2, v1);
+            }
+            );
+
+            // Écrire chaque élément du tableau _highscore dans le fichier highscore.txt
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(_game._path + "/data/highscore.txt"))) {
+              for (int i = 0; i < _highscore.length; i++) {
+                if (i == 0) {
+                  // ecrire avec sans retour à la ligne
+                  writer.write(_highscore[i]);
+                } else {
+                  // ecrire avec un retour à la ligne
+                  writer.write("\n" + _highscore[i]);
+                }
+              }
+            }
+            catch (IOException e) {
+              e.printStackTrace();
+            }
+            _highscoreMenu = false;
+            break;
+          }
         }
       }
     }
+    catch (IllegalArgumentException e) {
+      // gère le fait que les highscores ne sont pas présents dans l'enum Option
+    }
   }
 
-  void endPause() { // fonction qui fini la pause
+  void endPause() { // fonction qui fini la pause et qui recheck le temps
     _highscoreMenu = false;
     _game._gamePaused = false;
     _game._timeNoPause = (millis() - _time); // correpsond au temps écoule depuis le lancement du programme - le temps depuis le depuis de la pause
@@ -286,12 +303,17 @@ class Menu {
   }
 
   void hitboxCase(float i, int j, String [] writeMenu) { // fonction qui gere les fonctionalités de mon menu
+    // i est une coordonnée en Y qui correspond à une case du menu.
+    // j est un indice qui permet de récupérer la chaîne de caractères correspondant à la case du menu.
+
+    // Si la souris se trouve sur la case du menu (selon ses coordonnées en X et en Y).
     if (mouseY >= (_backgroundPosY*i) - _backgroundPosY / 12 && mouseY <= (_backgroundPosY*i)+ _backgroundPosY / 12 && mouseX <= _backgroundPosX + _backgroundPosX *0.5 && mouseX >= _backgroundPosX - _backgroundPosX *0.5 ) { // si je suis sur la case
       fill(RED);
+      //differentes possibliltés du menu
       optionMenu(j, writeMenu);
     } else {
       fill(BLUE);
-      if (mouseButton == LEFT && mousePressed && _highscoreMenu) { // reviens au jeu lorsque je clique n'importe ou dans le menu highscore 
+      if (mouseButton == LEFT && mousePressed && _highscoreMenu) { // Revenir au jeu lorsque je clique n'importe où dans le highscore
         mousePressed = false;
         endPause();
       }
