@@ -5,7 +5,7 @@ public class Fantome {
   int _cellX, _cellY, _move, _cacheMove;
   PVector _position, _direction;
   List <Integer> _directions; // je crée une copie des mouvements possibles par le fantome
-  boolean _frightened;
+  boolean _frightened, _passage;
   float _vitesse;
   color _color;
 
@@ -84,19 +84,25 @@ public class Fantome {
     _cacheMove = _directions.get(0); // je prends le premier element de ma liste
     _directions.remove(0); // et je l'enlève de la liste
   }
-  
-    void updateCellsBlinky() { // deplace Blinky sur la grille
+
+  void updateCells() { // deplace Blinky sur la grille
     _cellX += (int)_direction.x;
     _cellY += (int)_direction.y;
   }
-  
-    void move(float target) {
+
+  void move(float target) {
     try {
       switch(_board._cells[_cellX + (int)_direction.x][_cellY + (int) _direction.y]) { // je regarde la case devant moi
-      case DOOR :
       case WALL : // si la case est un WALL ou une DOOR
         wallGestion(target);
         break;
+      case DOOR :
+        if (!_passage) {  // gestion de la porte ouverture que dans un sens
+          _passage = true;
+          cacheMove();
+          break;
+        }
+        wallGestion(target);
       default: // si la case n'est pas un mur
         cacheMove();
       }
@@ -121,33 +127,33 @@ public class Fantome {
       if (_board._cells[_cellX - 1][_cellY] != TypeCell.WALL) {
         deleteCacheMove();
       } else {
-        updateCellsBlinky();
+        updateCells();
       }
       break;
     case RIGHT:
       if (_board._cells[_cellX][_cellY + 1] != TypeCell.WALL) {
         deleteCacheMove();
       } else {
-        updateCellsBlinky();
+        updateCells();
       }
       break;
     case DOWN:
       if (_board._cells[_cellX + 1][_cellY] != TypeCell.WALL) {
         deleteCacheMove();
       } else {
-        updateCellsBlinky();
+        updateCells();
       }
       break;
     case LEFT:
       if (_board._cells[_cellX][_cellY - 1] != TypeCell.WALL) {
         deleteCacheMove();
       } else {
-        updateCellsBlinky();
+        updateCells();
       }
       break;
     default: // si je n'ai pas de _cacheMove alors j'en crée un nouveau
       randomMove();
-      updateCellsBlinky();
+      updateCells();
     }
   }
 
