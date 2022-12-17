@@ -48,6 +48,7 @@ void music() { // fonction qui gère la musique
     }
     break;
   case END:
+    frightenedMusic.stop();
     chaseMusic.stop();
   }
 }
@@ -66,7 +67,7 @@ void keyPressed() {
   // la touche pressée est une lettre de l'alphabet en minuscule
   else if (keyCode != BACKSPACE && _game._menu._pseudo.length() < 3 && key >= LETTER_A && key <= LETTER_Z) {
     _game._menu._pseudo += key;
-  } 
+  }
   // Sinon, si la touche pressée est BACKSPACE et que la longueur du pseudo est supérieure à 0
   else if (keyCode == BACKSPACE && _game._menu._pseudo.length() > 0) {
     _game._menu._pseudo = _game._menu._pseudo.substring(0, _game._menu._pseudo.length() - 1);

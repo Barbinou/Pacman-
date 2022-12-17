@@ -15,7 +15,8 @@ public enum Option {
     CHARGER("CHARGER"),
     RECOMMENCER("RECOMMENCER"),
     HIGHSCORE("HIGHSCORE"),
-    QUITTER("QUITTER");
+    QUITTER("QUITTER"),
+    NAME("");
 
   final String value;
 
@@ -146,9 +147,9 @@ List <Integer> DIRECTIONS = new LinkedList <Integer> (Arrays.asList(directions_t
 
 static final String [] MENU_PAUSE = {Option.CONTINUER.getValue(), Option.SAUVEGARDER.getValue(), Option.CHARGER.getValue(), Option.RECOMMENCER.getValue(),
   Option.HIGHSCORE.getValue(), Option.QUITTER.getValue()};
-final String [] END_VICTOIRE = {Option.SAUVEGARDER.getValue(), Option.HIGHSCORE.getValue(), Option.QUITTER.getValue()};
-String [] END_FLAWLESS = {NAME_SPACE, Option.SAUVEGARDER.getValue(), Option.HIGHSCORE.getValue(), Option.QUITTER.getValue()};
-final String [] END_DEFAITE = {Option.SAUVEGARDER.getValue(), Option.HIGHSCORE.getValue(), Option.QUITTER.getValue()};
+final String [] END_VICTOIRE = {Option.RECOMMENCER.getValue(), Option.HIGHSCORE.getValue(), Option.QUITTER.getValue()};
+String [] END_FLAWLESS = {Option.NAME.getValue(), Option.RECOMMENCER.getValue(), Option.HIGHSCORE.getValue(), Option.QUITTER.getValue()};
+final String [] END_DEFAITE = {Option.RECOMMENCER.getValue(), Option.HIGHSCORE.getValue(), Option.QUITTER.getValue()};
 
 // position des cases dans le menu
 

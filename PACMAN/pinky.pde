@@ -46,7 +46,7 @@ class Pinky {
 
   void update() {
     frightenedMode();
-    if (millis() - _game._timeNoPause >= 15000) { // si la partie à plus de 15s alors mon _pinky bouge
+    if (millis() - _game._timeNoPause >= 15000 || _passage) { // si la partie à plus de 15s alors mon _pinky bouge
       float targetX = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
       float targetY = height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1;
       switch (_move) {

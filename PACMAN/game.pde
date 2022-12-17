@@ -14,7 +14,7 @@ class Game {
   int _savedTime;
   float _savedSD, _timeNoPause;
   List <Integer> _ghostScore;
-  boolean _musicF, _musicC, _gamePaused, _gameRetry, _gameEnd; //permet de lancer une seule fois la music au lieu de la lancer en continue
+  boolean _musicF, _musicC, _gamePaused, _gameRetry, _gameEnd, _gameRecover; //permet de lancer une seule fois la music au lieu de la lancer en continue
   String[] _rawData = loadStrings(BOARD_CREATE_FILE);
 
   Game(String path) {
@@ -34,6 +34,7 @@ class Game {
     _gamePaused = false;
     _gameRetry = false;
     _gameEnd = false;
+    _gameRecover = false;
     _gameState = GameState.CHASE;
     _path = path; // chemin absolu pour la sauvegarde
   }
@@ -206,6 +207,7 @@ class Game {
   void eatByGhost() { // quand pacman se fait toucher revient au depart avec une vie en moins
     _hero._life -= 1;
     _game = new Game(path.getAbsolutePath(), _board, _hero._life, _hero._score, true);
+    println(_inky._passage);
     _game._menu._time = millis();  // reset du temps
     _game._timeNoPause = millis();
   }
@@ -216,62 +218,73 @@ class Game {
 
     float targetX = (width / _board._nbCellsX) * (_hero._cellY + CENTRAGE_POSX); // targets pour savoir le millieu de la cellule
     float targetY = height * 0.9 / _board._nbCellsY * (_hero._cellX + CENTRAGE_POSY) + height * 0.1;
-
-    if (key == CODED || KEYS.contains(key)) { // si la clé est codée ou qu'elle appartient à la liste keys
-
-      if (keyCode == LEFT || key == 'q') {
-        if (_board._cells[_hero._cellX][_hero._cellY - 1] != TypeCell.WALL && _hero._position.y == targetY) { // si la case suivante n'est pas un mur et que PACMAN et au millieu de la cellule
-          _hero._move = LEFT; // si le mouvement est possbile
-        } else {
-          _hero._cacheMove = LEFT; // si le mouvement n'est pas possible
-        }
-      }
-
-      if (keyCode == RIGHT || key == 'd') {
-        if (_board._cells[_hero._cellX][_hero._cellY + 1] != TypeCell.WALL && _hero._position.y == targetY) {
-          _hero._move = RIGHT;
-        } else {
-          _hero._cacheMove = RIGHT;
-        }
-      }
-
-      if (keyCode == UP || key == 'z') {
-        if (_board._cells[_hero._cellX - 1][_hero._cellY] != TypeCell.WALL && _hero._position.x == targetX) {
-          _hero._move = UP;
-        } else {
-          _hero._cacheMove = UP;
-        }
-      }
-
-      if (keyCode == DOWN || key == 's') {
-        if ( _board._cells[_hero._cellX + 1][_hero._cellY] != TypeCell.WALL && _hero._position.x == targetX) {
-          _hero._move = DOWN;
-        } else {
-          _hero._cacheMove = DOWN;
-        }
-      }
-    }
-  }
-
-  void drawMode() {
-    textAlign(CENTER, CENTER);
-    textSize(CELL_SIZE_X*0.8);
-    fill(YELLOW);
-    text(String.valueOf(_gameState), width/2, height*0.05);
-  }
-
-  void saveGame(BufferedWriter writer) { // fonction qui permet de sauvegarder mes données de jeu
     try {
-      writer.write(String.format("\n%s %f _position.y %f _direction.x %f _direction.y %f _overpowered %b _life %d _score %d _cacheLife %d _move %d _cacheMove %d _cellX %d _cellY %d", Object.HERO.getValue(), _hero._position.x, _hero._position.y, _hero._direction.x, _hero._direction.y, _hero._overpowered, _hero._life, _hero._score, _hero._cacheLifeUp, _hero._move, _hero._cacheMove, _hero._cellX, _hero._cellY));
-      writer.write(String.format("\n%s %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d", Object.BLINKY.getValue(), _blinky._position.x, _blinky._position.y, _blinky._frightened, _blinky._move, _blinky._cacheMove, _blinky._direction.x, _blinky._direction.y, _blinky._directions.get(0), _blinky._directions.get(1), _blinky._cellX, _blinky._cellY)); // %f pour les floats, %d pour les entiers, %s pour les String et enfin %b pour les booléans
-      writer.write(String.format("\n%s %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d _passage %b", Object.INKY.getValue(), _inky._position.x, _inky._position.y, _inky._frightened, _inky._move, _inky._cacheMove, _inky._direction.x, _inky._direction.y, _inky._directions.get(0), _inky._directions.get(1), _inky._cellX, _inky._cellY, _inky._passage));
-      writer.write(String.format("\n%s %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d _passage %b", Object.PINKY.getValue(), _pinky._position.x, _pinky._position.y, _pinky._frightened, _pinky._move, _pinky._cacheMove, _pinky._direction.x, _pinky._direction.y, _pinky._directions.get(0), _pinky._directions.get(1), _pinky._cellX, _pinky._cellY, _pinky._passage));
-      writer.write(String.format("\n%s %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d _passage %b", Object.CLYDE.getValue(), _clyde._position.x, _clyde._position.y, _clyde._frightened, _pinky._move, _pinky._cacheMove, _clyde._direction.x, _clyde._direction.y, _clyde._directions.get(0), _clyde._directions.get(1), _clyde._cellX, _clyde._cellY, _clyde._passage));
-      writer.write(String.format("\n%s %b _numberFruits %d", Object.FRUIT.getValue(), _fruit._eatable, _fruit._numberFruits));
-      writer.write(String.format("\n%s %s _timeNoPause %f", Object.GAME.getValue(), _gameState, _game._timeNoPause));
+      if (key == CODED || KEYS.contains(key)) { // si la clé est codée ou qu'elle appartient à la liste keys
+
+        if (keyCode == LEFT || key == 'q') {
+          if (_board._cells[_hero._cellX][_hero._cellY - 1] != TypeCell.WALL && _hero._position.y == targetY) { // si la case suivante n'est pas un mur et que PACMAN et au millieu de la cellule
+            _hero._move = LEFT; // si le mouvement est possbile
+          } else {
+            _hero._cacheMove = LEFT; // si le mouvement n'est pas possible
+          }
+        }
+
+        if (keyCode == RIGHT || key == 'd') {
+          if (_board._cells[_hero._cellX][_hero._cellY + 1] != TypeCell.WALL && _hero._position.y == targetY) {
+            _hero._move = RIGHT;
+          } else {
+            _hero._cacheMove = RIGHT;
+          }
+        }
+
+        if (keyCode == UP || key == 'z') {
+          if (_board._cells[_hero._cellX - 1][_hero._cellY] != TypeCell.WALL && _hero._position.x == targetX) {
+            _hero._move = UP;
+          } else {
+            _hero._cacheMove = UP;
+          }
+        }
+
+        if (keyCode == DOWN || key == 's') {
+          if ( _board._cells[_hero._cellX + 1][_hero._cellY] != TypeCell.WALL && _hero._position.x == targetX) {
+            _hero._move = DOWN;
+          } else {
+            _hero._cacheMove = DOWN;
+          }
+        }
+      }
     }
-    catch (IOException e) {
-      e.printStackTrace();
+    catch (ArrayIndexOutOfBoundsException e) {
+      if (e.toString().equals(ERROR)) { // si PACMAN est OutOfBounds à gauche alors je le repositionne à droite et inversement
+        _hero._position.x = width;
+        _hero._cellY = 22;
+      } else {
+        _hero._position.x = 0;
+        _hero._cellY = 0;
+      }
     }
   }
+
+void drawMode() {
+  textAlign(CENTER, CENTER);
+  textSize(CELL_SIZE_X*0.8);
+  fill(YELLOW);
+  text(String.valueOf(_gameState), width/2, height*0.05);
+}
+
+void saveGame(BufferedWriter writer) { // fonction qui permet de sauvegarder mes données de jeu
+  try {
+    _timeNoPause = millis();
+    writer.write(String.format("\n%s %f _position.y %f _direction.x %f _direction.y %f _overpowered %b _life %d _score %d _cacheLife %d _move %d _cacheMove %d _cellX %d _cellY %d", Object.HERO.getValue(), _hero._position.x, _hero._position.y, _hero._direction.x, _hero._direction.y, _hero._overpowered, _hero._life, _hero._score, _hero._cacheLifeUp, _hero._move, _hero._cacheMove, _hero._cellX, _hero._cellY));
+    writer.write(String.format("\n%s %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d", Object.BLINKY.getValue(), _blinky._position.x, _blinky._position.y, _blinky._frightened, _blinky._move, _blinky._cacheMove, _blinky._direction.x, _blinky._direction.y, _blinky._directions.get(0), _blinky._directions.get(1), _blinky._cellX, _blinky._cellY)); // %f pour les floats, %d pour les entiers, %s pour les String et enfin %b pour les booléans
+    writer.write(String.format("\n%s %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d _passage %b", Object.INKY.getValue(), _inky._position.x, _inky._position.y, _inky._frightened, _inky._move, _inky._cacheMove, _inky._direction.x, _inky._direction.y, _inky._directions.get(0), _inky._directions.get(1), _inky._cellX, _inky._cellY, _inky._passage));
+    writer.write(String.format("\n%s %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d _passage %b", Object.PINKY.getValue(), _pinky._position.x, _pinky._position.y, _pinky._frightened, _pinky._move, _pinky._cacheMove, _pinky._direction.x, _pinky._direction.y, _pinky._directions.get(0), _pinky._directions.get(1), _pinky._cellX, _pinky._cellY, _pinky._passage));
+    writer.write(String.format("\n%s %f _position.y %f _frightened %b _move %d _cacheMove %d _direction.x %f _direction.y %f _directions[0] %d _directions[1] %d _cellX %d _cellY %d _passage %b", Object.CLYDE.getValue(), _clyde._position.x, _clyde._position.y, _clyde._frightened, _pinky._move, _pinky._cacheMove, _clyde._direction.x, _clyde._direction.y, _clyde._directions.get(0), _clyde._directions.get(1), _clyde._cellX, _clyde._cellY, _clyde._passage));
+    writer.write(String.format("\n%s %b _numberFruits %d", Object.FRUIT.getValue(), _fruit._eatable, _fruit._numberFruits));
+    writer.write(String.format("\n%s %s _timeNoPause %f", Object.GAME.getValue(), _gameState, _timeNoPause));
+  }
+  catch (IOException e) {
+    e.printStackTrace();
+  }
+}
 }

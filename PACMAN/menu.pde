@@ -65,7 +65,7 @@ class Menu {
         }
         // Affiche le nom et le score
         fill(WHITE);
-        text(String.format("Name %s : %d", _pseudo.toUpperCase(), _game._hero._score), _backgroundPosX, _backgroundPosY*MIN_MENU_Y);
+        text(String.format("%s %s : %d", Option.NAME, _pseudo.toUpperCase(), _game._hero._score), _backgroundPosX, _backgroundPosY*MIN_MENU_Y);
       } else {
         // Si j'ai deja enregistrer mon score ou que mon score n'est pas plus grand que le plus petit highscore
         if (DOT == 0) {
@@ -114,7 +114,51 @@ class Menu {
   }
 
   void optionMenu(int j, String[] writeMenu) {
+
     String argument = writeMenu[j];
+
+    if (writeMenu[j].equals(Option.NAME.getValue())) {
+      if (mouseButton == LEFT && mousePressed) {
+        mousePressed = false;
+        if (_pseudo.length() == 3) {
+          // Parcourir le tableau _highscore de la fin vers le début
+          for (int i = _highscore.length - 1; i >= 0; i--) {
+            // Si la valeur du score dans le tableau _highscore est inférieure au score du héros et que je n'ai pas encore sauvegardé mon nom
+            if (Integer.parseInt(split(_highscore[i], SEPARATOR)[1]) <= _game._hero._score && _possibilitySaveName) {
+              // Mettre à jour la valeur de _highscore
+              _highscore[i] = String.format("%s %d", _pseudo.toUpperCase(), _game._hero._score);
+              _possibilitySaveName = false;
+            }
+          }
+          // Trier la liste en utilisant une expression lambda
+          Arrays.sort(_highscore, (s1, s2) -> {
+            // Récupérer le nombre dans chaque chaîne de caractères
+            int v1 = Integer.parseInt(split(s1, SEPARATOR)[1]);
+            int v2 = Integer.parseInt(split(s2, SEPARATOR)[1]);
+            // Comparer les valeurs v1 et v2 et renvoyer le résultat
+            return Integer.compare(v2, v1);
+          }
+          );
+
+          // Écrire chaque élément du tableau _highscore dans le fichier highscore.txt
+          try (BufferedWriter writer = new BufferedWriter(new FileWriter(_game._path + "/data/highscore.txt"))) {
+            for (int i = 0; i < _highscore.length; i++) {
+              if (i == 0) {
+                // ecrire avec sans retour à la ligne
+                writer.write(_highscore[i]);
+              } else {
+                // ecrire avec un retour à la ligne
+                writer.write("\n" + _highscore[i]);
+              }
+            }
+          }
+          catch (IOException e) {
+            e.printStackTrace();
+          }
+          _highscoreMenu = false;
+        }
+      }
+    }
     try {
       switch(Option.valueOf(argument)) {
       case CONTINUER:
@@ -219,8 +263,14 @@ class Menu {
               _fruit = new Fruits(board, hero, Boolean.parseBoolean(split(gameSave[i], SEPARATOR)[1]), Integer.parseInt(split(gameSave[i], SEPARATOR)[3]));
               break;
             case GAME:
+              float gameTime = Float.parseFloat(split(gameSave[gameSave.length - 1], SEPARATOR)[3]);
+              if (millis() - gameTime <= 0) {
+                gameTime = millis(); // evite un nombre negatif dans la condition de sortie 
+              } else {
+                gameTime = millis() - gameTime; 
+              }
               _game = new Game(path.getAbsolutePath(), board, hero, _blinky, _inky, _pinky, _clyde, _fruit, GameState.valueOf(split(gameSave[gameSave.length - 1], SEPARATOR)[1]),
-                Float.parseFloat(split(gameSave[gameSave.length - 1], SEPARATOR)[3]));
+                gameTime);
               break;
             }
           }
@@ -246,48 +296,6 @@ class Menu {
           exit();
         }
         break;
-      default:
-        if (mouseButton == LEFT && mousePressed) {
-          mousePressed = false;
-          if (_pseudo.length() == 3) {
-            // Parcourir le tableau _highscore de la fin vers le début
-            for (int i = _highscore.length - 1; i >= 0; i--) {
-              // Si la valeur du score dans le tableau _highscore est inférieure au score du héros et que je n'ai pas encore sauvegardé mon nom
-              if (Integer.parseInt(split(_highscore[i], SEPARATOR)[1]) <= _game._hero._score && _possibilitySaveName) {
-                // Mettre à jour la valeur de _highscore
-                _highscore[i] = String.format("%s %d", _pseudo.toUpperCase(), _game._hero._score);
-                _possibilitySaveName = false;
-              }
-            }
-            // Trier la liste en utilisant une expression lambda
-            Arrays.sort(_highscore, (s1, s2) -> {
-              // Récupérer le nombre dans chaque chaîne de caractères
-              int v1 = Integer.parseInt(split(s1, SEPARATOR)[1]);
-              int v2 = Integer.parseInt(split(s2, SEPARATOR)[1]);
-              // Comparer les valeurs v1 et v2 et renvoyer le résultat
-              return Integer.compare(v2, v1);
-            }
-            );
-
-            // Écrire chaque élément du tableau _highscore dans le fichier highscore.txt
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(_game._path + "/data/highscore.txt"))) {
-              for (int i = 0; i < _highscore.length; i++) {
-                if (i == 0) {
-                  // ecrire avec sans retour à la ligne
-                  writer.write(_highscore[i]);
-                } else {
-                  // ecrire avec un retour à la ligne
-                  writer.write("\n" + _highscore[i]);
-                }
-              }
-            }
-            catch (IOException e) {
-              e.printStackTrace();
-            }
-            _highscoreMenu = false;
-            break;
-          }
-        }
       }
     }
     catch (IllegalArgumentException e) {

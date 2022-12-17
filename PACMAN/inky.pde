@@ -45,7 +45,7 @@ class Inky {
 
   void update() {
     frightenedMode();
-    if (millis() - _game._timeNoPause >= 10000) { // si la partie à plus de 10s alors mon _inky bouge
+    if (millis() - _game._timeNoPause >= 10000 || _passage) { // si la partie à plus de 10s alors mon _inky bouge
       float targetX = (width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX);
       float targetY = height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1;
       switch (_move) {

@@ -1,4 +1,4 @@
-public class Blinky {
+public class Fantome {
 
   Board _board;
   Hero _hero;
@@ -9,37 +9,14 @@ public class Blinky {
   float _vitesse;
   color _color;
 
-  Blinky(Board b, Hero h) {
+  Fantome(Board b, Hero h) {
     _board = b;
     _hero = h;
     _directions = new ArrayList <>(DIRECTIONS);
-    _color = RED;
     _frightened = false;
-    _move = RIGHT; // premier mouvement de blinky
-    getCellBlinky();
     _vitesse = VITESSE_GHOST;
     _direction = new PVector (0, 0);
-    _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1); //position de PACMAN recupere
   }
-
-  Blinky(Board b, Hero h, PVector position, boolean frightened, int move, int cacheMove, PVector direction, int directions1, int directions2, int cellX, int cellY) {
-    _board = b;
-    _hero = h;
-    _position = position;
-    _cellY = cellY;
-    _cellX = cellX;
-    _color = RED;
-    _frightened = frightened;
-    _move = move; // premier mouvement de blinky
-    _cacheMove = cacheMove;
-    _vitesse = VITESSE_GHOST;
-    _directions = new ArrayList<>();
-    _directions.add(directions1);
-    _directions.add(directions2);
-    _direction = direction;
-  }
-
-  // pour les commentaires de cette partie se référé aussi à la classe Hero //
 
   void update() {
     frightenedMode();
@@ -81,7 +58,7 @@ public class Blinky {
     }
   }
 
-  void drawIt() { // dessine blinky
+  void drawIt() {
     noStroke();
     fill(_color);
     ellipse(_position.x + _board._offset.x, _position.y, GHOST_WIDTH, GHOST_HEIGHT);
@@ -107,13 +84,13 @@ public class Blinky {
     _cacheMove = _directions.get(0); // je prends le premier element de ma liste
     _directions.remove(0); // et je l'enlève de la liste
   }
-
-  void updateCellsBlinky() { // deplace Blinky sur la grille
+  
+    void updateCellsBlinky() { // deplace Blinky sur la grille
     _cellX += (int)_direction.x;
     _cellY += (int)_direction.y;
   }
-
-  void move(float target) {
+  
+    void move(float target) {
     try {
       switch(_board._cells[_cellX + (int)_direction.x][_cellY + (int) _direction.y]) { // je regarde la case devant moi
       case DOOR :
@@ -223,17 +200,5 @@ public class Blinky {
     boolean touchDown = (_hero._position.y + (GHOST_HEIGHT*0.5) <= _position.y) && (_hero._position.y + (GHOST_HEIGHT) >= _position.y - (GHOST_HEIGHT*0.5));
     boolean samePosX = _position.x + 2 >= _hero._position.x && _position.x - 2 <= _hero._position.x;
     return ((samePosY && (touchLeft || touchRight)) || (samePosX && (touchDown || touchUp))); // condtitions finale pour savoir quand Pacman touche un fantôme
-  }
-
-  void getCellBlinky() {
-    for (int x = 0; x < _board._cells.length; x++) {
-      for (int y = 0; y < _board._cells[x].length; y++) {
-        switch (_board._cells[x][y]) {
-        case BLINKY:
-          _cellX = x;
-          _cellY = y;
-        }
-      }
-    }
   }
 }
