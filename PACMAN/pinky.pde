@@ -2,7 +2,6 @@ public class Pinky extends Fantome {
 
   Pinky(Board b, Hero h) {
     super(b, h);
-    _passage = false;
     _move = LEFT;
     _cacheMove = UP;
     getCellPinky();
@@ -31,6 +30,7 @@ public class Pinky extends Fantome {
     }
   }
 
+  @Override
   void frightenedMode() {
     if (_frightened) {
       _vitesse = 0.025;

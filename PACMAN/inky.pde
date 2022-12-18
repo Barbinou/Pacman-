@@ -2,7 +2,6 @@ public class Inky extends Fantome{
 
   Inky(Board b, Hero h) {
     super(b, h); 
-    _passage = false;
     _move = RIGHT; 
     _cacheMove = UP;
     getCellInky();
@@ -33,6 +32,7 @@ public class Inky extends Fantome{
     }
   }
 
+  @Override
   void frightenedMode() {
     if (_frightened) {
       _vitesse = 0.025;
@@ -42,6 +42,7 @@ public class Inky extends Fantome{
       _color = LIGHT_BLUE;
     }
   }
+  
   void getCellInky() {
     for (int x = 0; x < _board._cells.length; x++) {
       for (int y = 0; y < _board._cells[x].length; y++) {

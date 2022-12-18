@@ -2,7 +2,6 @@ public class Clyde extends Fantome{
 
   Clyde(Board b, Hero h) {
     super(b, h); 
-    _passage = false; // passage permet de savoir si les fantomes ont déjà traversé la porte pour ne pas les faire rerentrer dans la zone des fantomes
     _move = UP; // permet de faire sortir clyde de la zone des fantomes
     getCellClyde();
     _position = new PVector ((width / _board._nbCellsX) * (_cellY + CENTRAGE_POSX), height * 0.9 / _board._nbCellsY * (_cellX + CENTRAGE_POSY) + height * 0.1);
@@ -33,6 +32,7 @@ public class Clyde extends Fantome{
     }
   }
 
+  @Override
   void frightenedMode() {
     if (_frightened) {
       _vitesse = 0.025;

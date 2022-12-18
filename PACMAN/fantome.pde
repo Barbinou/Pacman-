@@ -14,6 +14,7 @@ public class Fantome {
     _hero = h;
     _directions = new ArrayList <>(DIRECTIONS);
     _frightened = false;
+    _passage = false;
     _vitesse = VITESSE_GHOST;
     _direction = new PVector (0, 0);
   }
@@ -103,6 +104,7 @@ public class Fantome {
           break;
         }
         wallGestion(target);
+        break; 
       default: // si la case n'est pas un mur
         cacheMove();
       }
