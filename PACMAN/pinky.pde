@@ -31,13 +31,22 @@ public class Pinky extends Fantome {
   }
 
   @Override
-  void frightenedMode() {
-    if (_frightened) {
-      _vitesse = 0.025;
-      _color = BLUE;
-    } else {
-      _vitesse = VITESSE_GHOST;
-      _color = PINK;
+    void drawIt() {
+    if (!_frightened) {
+      switch(_move) {
+      case RIGHT:
+        image(sprites.get(1), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+        break;
+      case DOWN:
+        image(sprites.get(37), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+        break;
+      case LEFT:
+        image(sprites.get(73), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+        break;
+      case UP:
+        image(sprites.get(109), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+        break;
+      }
     }
   }
 

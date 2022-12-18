@@ -1,8 +1,8 @@
 
-HERO 391,000000 _position.y 462,545441 _direction.x 0,000000 _direction.y 0,000000 _overpowered false _life 2 _score 0 _cacheLife 0 _move 0 _cacheMove 0 _cellX 16 _cellY 11
-BLINKY 425,000000 _position.y 242,381790 _frightened false _move 38 _cacheMove 38 _direction.x -1,000000 _direction.y 0,000000 _directions[0] 39 _directions[1] 37 _cellX 7 _cellY 12
-INKY 357,000000 _position.y 315,272705 _frightened false _move 39 _cacheMove 38 _direction.x 0,000000 _direction.y 0,000000 _directions[0] 37 _directions[1] 39 _cellX 10 _cellY 10 _passage false
-PINKY 425,000000 _position.y 315,272705 _frightened false _move 37 _cacheMove 38 _direction.x 0,000000 _direction.y 0,000000 _directions[0] 37 _directions[1] 39 _cellX 10 _cellY 12 _passage false
-CLYDE 391,000000 _position.y 315,272705 _frightened false _move 37 _cacheMove 38 _direction.x 0,000000 _direction.y 0,000000 _directions[0] 37 _directions[1] 39 _cellX 10 _cellY 11 _passage false
-FRUIT false _numberFruits 1
-GAME CHASE _timeNoPause 8767,000000
+HERO 302,500000 _position.y 113,236359 _direction.x -1,000000 _direction.y 0,000000 _overpowered true _life 2 _score 1210 _cacheLife 0 _move 38 _cacheMove 0 _cellX 1 _cellY 5
+BLINKY 852,500000 _position.y 435,281799 _frightened false _move 40 _cacheMove 37 _direction.x 1,000000 _direction.y 0,000000 _directions[0] 40 _directions[1] 39 _cellX 12 _cellY 15
+INKY 1178,375000 _position.y 260,509094 _frightened true _move 39 _cacheMove 40 _direction.x 0,000000 _direction.y 1,000000 _directions[0] 39 _directions[1] 38 _cellX 6 _cellY 21 _passage true
+PINKY 577,500000 _position.y 140,736359 _frightened true _move 40 _cacheMove 39 _direction.x 1,000000 _direction.y 0,000000 _directions[0] 40 _directions[1] 37 _cellX 2 _cellY 10 _passage true
+CLYDE 247,500000 _position.y 672,872742 _frightened true _move 40 _cacheMove 39 _direction.x 0,000000 _direction.y -1,000000 _directions[0] 38 _directions[1] 37 _cellX 20 _cellY 3 _passage true
+FRUIT true _numberFruits 1
+GAME FRIGHTENED _timeNoPause 80617,000000

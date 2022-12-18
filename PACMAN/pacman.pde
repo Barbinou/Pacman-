@@ -4,6 +4,8 @@ Game _game;
 Board _board;
 SoundFile frightenedMusic, chaseMusic;
 File path;
+PImage spriteSheet;
+List<PImage> sprites;
 
 void setup() {
   size(800, 600, P2D);
@@ -11,6 +13,20 @@ void setup() {
   chaseMusic = new SoundFile(this, "music/Aggresivity_7.wav");
   path = new File(sketchPath("")); // creation d'un objet file pour pouvoir avoir le chemin absolu
   _game = new Game(path.getAbsolutePath()); // permet d'obtenir le chemin absolu pour enregister mon fichier
+  spriteSheet = loadImage("img/pacman_sprites.png"); // load des sprites 
+  sprites = new ArrayList<PImage>();
+  
+  // Déterminez le nombre de lignes et de colonnes de sprites dans l'image de sprite
+  int rows = spriteSheet.height / 50;
+  int cols = spriteSheet.width / 50;
+  
+  // Parcourez chaque sprite de l'image qui contients les sprites et les ajoutes à la liste
+  for (int y = 0; y < rows; y++) {
+    for (int x = 0; x < cols; x++) {
+      PImage sprite = spriteSheet.get(x*50, y*50, 50, 50);
+      sprites.add(sprite);
+    }
+  }
 }
 
 void draw() {

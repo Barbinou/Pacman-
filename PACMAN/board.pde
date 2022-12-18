@@ -74,6 +74,7 @@ class Board {
         }
 
         CELL_SIZE_X = width /_nbCellsX;
+        CELL_SIZE_Y = height / _nbCellsY; 
 
         switch (_cells[x][y]) {  // prends les differents cas de _cells[][] pour dessiner les differentes parties du board
         case WALL:

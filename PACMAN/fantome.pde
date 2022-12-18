@@ -60,9 +60,22 @@ public class Fantome {
   }
 
   void drawIt() {
-    noStroke();
-    fill(_color);
-    ellipse(_position.x + _board._offset.x, _position.y, GHOST_WIDTH, GHOST_HEIGHT);
+    if (!_frightened) {
+      switch(_move) {
+      case RIGHT:
+        image(sprites.get(0), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+        break;
+      case DOWN:
+        image(sprites.get(36), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+        break;
+      case LEFT:
+        image(sprites.get(72), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+        break;
+      case UP:
+        image(sprites.get(108), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+        break;
+      }
+    }
   }
 
   void randomMove() { // permet d'avoir les mouvements possible du fantomes
@@ -104,7 +117,7 @@ public class Fantome {
           break;
         }
         wallGestion(target);
-        break; 
+        break;
       default: // si la case n'est pas un mur
         cacheMove();
       }
@@ -187,10 +200,9 @@ public class Fantome {
   void frightenedMode() { // changement d'apparence et de vitesse lors du FRIGHTENED
     if (_frightened) {
       _vitesse = 0.025;
-      _color = BLUE;
+      image(sprites.get(216), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
     } else {
       _vitesse = VITESSE_GHOST;
-      _color = RED;
     }
   }
 

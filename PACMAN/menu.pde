@@ -113,6 +113,24 @@ class Menu {
     }
   }
 
+  void hitboxCase(float i, int j, String [] writeMenu) { // fonction qui gere les fonctionalités de mon menu
+    // i est une coordonnée en Y qui correspond à une case du menu.
+    // j est un indice qui permet de récupérer la chaîne de caractères correspondant à la case du menu.
+
+    // Si la souris se trouve sur la case du menu (selon ses coordonnées en X et en Y).
+    if (mouseY >= (_backgroundPosY*i) - _backgroundPosY / 12 && mouseY <= (_backgroundPosY*i)+ _backgroundPosY / 12 && mouseX <= _backgroundPosX + _backgroundPosX *0.5 && mouseX >= _backgroundPosX - _backgroundPosX *0.5 ) { // si je suis sur la case
+      fill(RED);
+      //differentes possibliltés du menu
+      optionMenu(j, writeMenu);
+    } else {
+      fill(BLUE);
+      if (mouseButton == LEFT && mousePressed && _highscoreMenu) { // Revenir au jeu lorsque je clique n'importe où dans le highscore
+        mousePressed = false;
+        endPause();
+      }
+    }
+  }
+
   void optionMenu(int j, String[] writeMenu) {
 
     String argument = writeMenu[j];
@@ -265,9 +283,9 @@ class Menu {
             case GAME:
               float gameTime = Float.parseFloat(split(gameSave[gameSave.length - 1], SEPARATOR)[3]);
               if (millis() - gameTime <= 0) {
-                gameTime = millis(); // evite un nombre negatif dans la condition de sortie 
+                gameTime = millis(); // evite un nombre negatif dans la condition de sortie
               } else {
-                gameTime = millis() - gameTime; 
+                gameTime = millis() - gameTime;
               }
               _game = new Game(path.getAbsolutePath(), board, hero, _blinky, _inky, _pinky, _clyde, _fruit, GameState.valueOf(split(gameSave[gameSave.length - 1], SEPARATOR)[1]),
                 gameTime);
@@ -308,23 +326,5 @@ class Menu {
     _game._gamePaused = false;
     _game._timeNoPause = (millis() - _time); // correpsond au temps écoule depuis le lancement du programme - le temps depuis le depuis de la pause
     _game._menu._time = millis() - _game._timeNoPause; // correpsond au temps en sortie du menu
-  }
-
-  void hitboxCase(float i, int j, String [] writeMenu) { // fonction qui gere les fonctionalités de mon menu
-    // i est une coordonnée en Y qui correspond à une case du menu.
-    // j est un indice qui permet de récupérer la chaîne de caractères correspondant à la case du menu.
-
-    // Si la souris se trouve sur la case du menu (selon ses coordonnées en X et en Y).
-    if (mouseY >= (_backgroundPosY*i) - _backgroundPosY / 12 && mouseY <= (_backgroundPosY*i)+ _backgroundPosY / 12 && mouseX <= _backgroundPosX + _backgroundPosX *0.5 && mouseX >= _backgroundPosX - _backgroundPosX *0.5 ) { // si je suis sur la case
-      fill(RED);
-      //differentes possibliltés du menu
-      optionMenu(j, writeMenu);
-    } else {
-      fill(BLUE);
-      if (mouseButton == LEFT && mousePressed && _highscoreMenu) { // Revenir au jeu lorsque je clique n'importe où dans le highscore
-        mousePressed = false;
-        endPause();
-      }
-    }
   }
 }

@@ -34,10 +34,7 @@ class Fruits {
   }
 
   void drawFruit() {
-    fill(GREEN);
-    stroke(RED);
-    ellipse(_position.x + _board._offset.x, _position.y, (width /_board._nbCellsY)*0.7, (height / _board._nbCellsX)*0.7); // PACMAN
-    noStroke();
+    image(sprites.get(12), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
   }
 
   boolean conditionTouch() {

@@ -38,7 +38,7 @@ class Game {
     _gameRecover = false;
     _gameState = GameState.CHASE;
     _path = path; // chemin absolu pour la sauvegarde
-    createListGhost(_fantomes);
+    createListGhost(_fantomes); // creation de la liste des fantomes 
   }
 
   Game(String path, Board board, int heroLife, int heroScore, boolean musicC) {
@@ -87,7 +87,7 @@ class Game {
   void update() {
     if (!_gamePaused && (_gameState != GameState.END)) { // si le jeu est en pause j'arrete l'update
       _hero.update();
-      _fantomes.forEach(fantome -> fantome.update());
+      _fantomes.forEach(fantome -> fantome.update()); // pour chaque fantomes de la liste j'applique la fonction update
       frightenedPhase();  // phase FRIGHTENED si SD mangé
       touch(); // si pacman touche un fantome
       victoire();
@@ -99,7 +99,7 @@ class Game {
   void drawIt() {
     _board.drawIt();
     _hero.drawIt();
-    _fantomes.forEach(fantome -> fantome.drawIt());
+    _fantomes.forEach(fantome -> fantome.drawIt()); // pareil que pour la fonction update 
     _fruit.drawIt();
     drawMode();
   }
@@ -118,7 +118,7 @@ class Game {
   }
 
   void touch() {
-    ArrayList <Fantome> ghostList = new ArrayList<>();
+    ArrayList <Fantome> ghostList = new ArrayList<>(); // creation d'une nouvelle liste pour eviter une erreur outOfBound 
     createListGhost(ghostList);
     for (Fantome ghost : ghostList) {
       if (ghost.conditionTouch()) {
@@ -132,7 +132,7 @@ class Game {
         }
       }
     }
-    _fantomes = ghostList;
+    _fantomes = ghostList; // update la liste des fantomes 
     // si PACMAN touche un fruit et qu'il est mangeable
     if (_fruit.conditionTouch() && _fruit._eatable) {
       // j'augmente mon score
@@ -143,7 +143,7 @@ class Game {
     }
   }
 
-  void resetGhost(Fantome fantome) {
+  void resetGhost(Fantome fantome) { // permet de faire repop le fantomes apres l'avoir mangé 
     if (fantome instanceof Blinky) {
       _blinky = new Blinky (_board, _hero);
     }

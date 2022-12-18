@@ -11,7 +11,7 @@ class Hero {
   Board _board;
 
   PVector _direction;
-  boolean _overpowered; 
+  boolean _overpowered;
 
   Hero(Board b) {  // constructeur de hero
     _board = b;
@@ -28,14 +28,14 @@ class Hero {
     _board = b;
     _overpowered = overpowered;
     _cellX = cellX;
-    _cellY = cellY; 
+    _cellY = cellY;
     _life = life;
     _score = score;
     _direction = direction;
     _position = position;
     _cacheLifeUp = cacheLifeUp;
     _move = move;
-    _cacheMove = cacheMove; 
+    _cacheMove = cacheMove;
     _scoreFont = createFont("score.TTF", 128, true); // je créée ma font
   }
 
@@ -169,15 +169,31 @@ class Hero {
 
   void drawIt() {
     drawPacman();
+    fill(YELLOW);
     drawLife();
     drawScore();
   }
 
   void drawPacman () {
-    noStroke();
-    fill(YELLOW);
-    //PACMAN avec une hauteur et largeur "gale à la moitie de la case
-    ellipse(_position.x + _board._offset.x, _position.y, (width /_board._nbCellsY)*0.5, (height / _board._nbCellsX)*0.5);
+    switch(_move) { // on check le mouvement du hero 
+    case RIGHT: // on appliquer le sprite correspondant 
+      //image(sprite, position.X, position.Y, width, height)
+      image(sprites.get(53), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+      break;
+    case DOWN:
+      image(sprites.get(107), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+      break;
+    case LEFT:
+      image(sprites.get(161), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+      break;
+    case UP:
+      image(sprites.get(215), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+      break;
+    default:
+      // debut de jeu 
+      image(sprites.get(17), (_position.x + _board._offset.x) - CELL_SIZE_X / 3.4, _position.y  - CELL_SIZE_Y / 4, GHOST_WIDTH*1.5, GHOST_HEIGHT*1.5);
+      break;
+    }
   }
 
   void drawLife() { // dessine la vie
